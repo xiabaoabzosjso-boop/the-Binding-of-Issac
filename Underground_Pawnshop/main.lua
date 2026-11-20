@@ -112,29 +112,29 @@ local function executeTrade(player, offer)
     local countBefore = draft.itemCounts[itemId]
 
     if not rules.confirmCounterOffer(draft, offer) then
-        return "Offer changed or not enough coins."
+        return "offer_changed"
     end
 
     local expectedCount = draft.itemCounts[itemId]
-    local failureMessage
+    local failure
 
     player:AddCoins(draft.coins - coinsBefore)
     if player:GetNumCoins() ~= draft.coins then
-        failureMessage = "Could not apply the full coin amount."
+        failure = "coin_limit"
     else
         changeItemCount(player, itemId, expectedCount - countBefore)
         if player:GetCollectibleNum(itemId, true) ~= expectedCount
             or player:GetNumCoins() ~= draft.coins
         then
-            failureMessage = "Could not complete the trade."
+            failure = "trade_failed"
         end
     end
 
-    if failureMessage ~= nil then
+    if failure ~= nil then
         if rollbackTrade(player, itemId, coinsBefore, countBefore) then
-            return failureMessage
+            return failure
         end
-        return "Trade recovery incomplete. Check coins and items."
+        return "recovery_incomplete"
     end
 
     if roomEntry == nil then
@@ -145,12 +145,7 @@ local function executeTrade(player, offer)
     rules.cancelCounterOffer(ledger)
     SFXManager():Play(SoundEffect.SOUND_CASH_REGISTER, 0.55, 0, false, 1)
 
-    local name = rules.ITEM_BY_ID[itemId].name
-    if offer.kind == "pawn" then
-        return string.format("Pawned %s (+%dc)", name, offer.payout)
-    end
-
-    return string.format("Redeemed %s (-%dc)", name, offer.redeemPrice)
+    return offer.kind
 end
 
 local function loadSavedLedger()
@@ -173,32 +168,16 @@ local function onGameStarted(_, isContinued)
     local saved = isContinued and loadSavedLedger() or nil
 
     rules.startRun(ledger, saved, runId, floorId, isContinued)
-    roomEntry = nil
+    roomEntry = snapshotLedger()
     previousFloorEntry = nil
     rewindPending = false
-
-    if not isContinued then
-        roomEntry = snapshotLedger()
-    end
-
-    if rules.matchesSave(saved, runId, floorId) then
-        if rules.matchesSave(saved.roomEntry, runId, floorId) then
-            roomEntry = saved.roomEntry
-        end
-
-        local previous = saved.previousFloorEntry
-        if type(previous) == "table"
-            and previous.runId == runId
-            and type(previous.floorId) == "string"
-            and previous.floorId ~= floorId
-        then
-            previousFloorEntry = previous
-        end
-    end
 end
 
 local function enterFloor(floorId)
-    previousFloorEntry = snapshotLedger()
+    if previousFloorEntry == nil then
+        previousFloorEntry = roomEntry or snapshotLedger()
+    end
+
     rules.onNewLevel(ledger, floorId)
     roomEntry = snapshotLedger()
 end
@@ -217,10 +196,7 @@ local function onGameExit(_, shouldSave)
 
     ledger.runReady = false
     if shouldSave then
-        local saved = snapshotLedger()
-        saved.roomEntry = roomEntry
-        saved.previousFloorEntry = previousFloorEntry
-        mod:SaveData(json.encode(saved))
+        mod:SaveData(json.encode(snapshotLedger()))
     end
 end
 
@@ -419,10 +395,11 @@ local function updateShopCounter()
             rules.cancelCounterOffer(ledger)
             local result = executeTrade(player, pendingOffer)
             counter.feedback = {
-                text = result,
+                result = result,
+                offer = pendingOffer,
                 hideAtFrame = Game():GetFrameCount() + FEEDBACK_FRAMES,
             }
-            print("[Pawnshop] " .. result)
+            print("[Pawnshop] " .. ui.formatFeedback(counter.feedback))
             refreshCounterOffer(player, 0)
         end
         return
@@ -432,7 +409,7 @@ local function updateShopCounter()
     if not pressedConfirm then
         if Input.IsButtonTriggered(Keyboard.KEY_F9, 0) or padCommand == "next" then
             direction = 1
-        elseif Input.IsButtonTriggered(Keyboard.KEY_F6, 0) or padCommand == "previous" then
+        elseif Input.IsButtonTriggered(Keyboard.KEY_F5, 0) or padCommand == "previous" then
             direction = -1
         end
     end

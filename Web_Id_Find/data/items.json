@@ -1,0 +1,1726 @@
+[
+  {
+    "id": 1,
+    "nameZh": "伤心洋葱",
+    "aliases": [
+      "悲伤洋葱",
+      "悲伤的洋葱",
+      "洋葱"
+    ],
+    "nameEn": "The Sad Onion",
+    "quote": "射速提升",
+    "quoteEn": "Tears up",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "tear",
+    "effect": "射速修正 +0.7（直接增加基础射速，显著提升泪弹发射频率）。",
+    "stats": [
+      "↑ 射速 +0.7"
+    ],
+    "synergies": "全游戏最纯粹的基础射速提升之一，编号 #1 的开山之作，与任何眼泪特效完美叠加。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 2,
+    "nameZh": "内眼",
+    "aliases": [
+      "天眼",
+      "三眼",
+      "三重眼"
+    ],
+    "nameEn": "The Inner Eye",
+    "quote": "三重射击",
+    "quoteEn": "Triple shot",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "eye",
+    "effect": "每次攻击同时发射 3 发扇形眼泪，但射速乘以 0.51x（大幅降低射速）。",
+    "stats": [
+      "三发齐射",
+      "↓ 射速 ×0.51"
+    ],
+    "synergies": "计入连体套 (Conjoined)；搭配硫磺火、妈刀或科技X可一次释放三道光束、三把飞刀或三个激光环；搭配谷底石可无视射速惩罚。",
+    "transforms": [
+      "Conjoined"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 3,
+    "nameZh": "弯勺者",
+    "aliases": [
+      "弯勺",
+      "念力弯勺",
+      "超能力弯勺"
+    ],
+    "nameEn": "Spoon Bender",
+    "quote": "追踪射击",
+    "quoteEn": "Homing shots",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "psychic",
+    "effect": "赋予眼泪紫色念力追踪效果，自动转向追踪视野内的敌人。",
+    "stats": [
+      "紫泪念力追踪"
+    ],
+    "synergies": "与硫磺火或科技X激光结合形成自动拐弯的紫色追踪光束，输出效率质变。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 4,
+    "nameZh": "克利吉特的头",
+    "aliases": [
+      "克里克特的头",
+      "蟋蟀的头",
+      "猫头",
+      "狗头"
+    ],
+    "nameEn": "Cricket's Head",
+    "quote": "伤害提升",
+    "quoteEn": "DMG up",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "damage",
+    "effect": "伤害 +0.5，并赋予 ×1.5 总伤害倍率（不与魔法菇或血之殉道者的 ×1.5 倍率叠加）。",
+    "stats": [
+      "↑ 伤害 +0.5",
+      "↑ 总伤害 ×1.5"
+    ],
+    "synergies": "宝箱房顶级面板放大器；后续拿到的任何固定伤害加成都会被放大 1.5 倍。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 11,
+    "nameZh": "1UP!",
+    "aliases": [
+      "1UP",
+      "1UP蘑菇",
+      "绿蘑菇",
+      "加命蘑菇"
+    ],
+    "nameEn": "1up!",
+    "quote": "额外生命",
+    "quoteEn": "Extra life",
+    "quality": 2,
+    "type": "familiar",
+    "pools": [
+      "隐藏房"
+    ],
+    "icon": "mushroom",
+    "effect": "提供 1 条额外生命。死亡后在上一间房间以满红心容器状态复活。",
+    "stats": [
+      "额外生命 +1"
+    ],
+    "synergies": "计入蘑菇套 (Fun Guy)；在复活前可放心进行高风险恶魔房交易。",
+    "transforms": [
+      "Fun Guy"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 12,
+    "nameZh": "魔法菇",
+    "aliases": [
+      "魔法蘑菇",
+      "红蘑菇",
+      "大蘑菇"
+    ],
+    "nameEn": "Magic Mushroom",
+    "quote": "全属性提升！",
+    "quoteEn": "All stats up!",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "mushroom",
+    "effect": "全属性提升：红心容器 +1 并回满全部红心，伤害 +0.3 且总伤害 ×1.5，射程 +1.5，移速 +0.3，角色体型变大。",
+    "stats": [
+      "↑ 伤害 ×1.5",
+      "↑ 红心 +1 & 回满",
+      "↑ 移速 +0.3"
+    ],
+    "synergies": "计入蘑菇套 (Fun Guy)；敲碎地下室蘑菇也有极小概率直接掉落。",
+    "transforms": [
+      "Fun Guy"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 14,
+    "nameZh": "狂暴针",
+    "aliases": [
+      "类固醇狂怒",
+      "类固醇之怒",
+      "激素针",
+      "绿针"
+    ],
+    "nameEn": "Roid Rage",
+    "quote": "速度+射程提升",
+    "quoteEn": "Speed and range up",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "宝箱房",
+      "Boss房"
+    ],
+    "icon": "syringe",
+    "effect": "移速 +0.3，射程 +1.5（《忏悔》版本将原弹速加成调整为射程 +1.5）。",
+    "stats": [
+      "↑ 移速 +0.3",
+      "↑ 射程 +1.5"
+    ],
+    "synergies": "计入嗑药套/针套 (Spun)，是凑齐三针变身的重要跳板。",
+    "transforms": [
+      "Spun"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 15,
+    "nameZh": "<3",
+    "aliases": [
+      "心脏",
+      "爱心",
+      "红心"
+    ],
+    "nameEn": "<3",
+    "quote": "生命提升",
+    "quoteEn": "HP up",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "heart",
+    "effect": "红心容器 +1，并立即回满全部空红心容器。",
+    "stats": [
+      "↑ 红心容器 +1",
+      "回满全部红心"
+    ],
+    "synergies": "击败暴食 (Gluttony) 也有概率固定掉落，牺牲房与献血机的最佳续航。",
+    "transforms": [],
+    "specialSources": [
+      "击败七宗罪·暴食 (Gluttony) 概率掉落"
+    ],
+    "unlock": null
+  },
+  {
+    "id": 69,
+    "nameZh": "巧克力奶",
+    "aliases": [
+      "巧克力牛奶",
+      "可可奶"
+    ],
+    "nameEn": "Chocolate Milk",
+    "quote": "蓄力射击",
+    "quoteEn": "Charge shots",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "tear",
+    "effect": "改为蓄力射击：点按可极速连射低伤眼泪，长按满蓄力可发射高达 ×4 伤害的巨型巧克力泪弹。",
+    "stats": [
+      "蓄力 0.25x~4x 伤害"
+    ],
+    "synergies": "《忏悔》中与硫磺火、妈刀、被遗忘者的骨棒都有极佳蓄力增伤联动。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 70,
+    "nameZh": "生长激素",
+    "aliases": [
+      "荷尔蒙",
+      "粉针"
+    ],
+    "nameEn": "Growth Hormones",
+    "quote": "伤害及速度提升",
+    "quoteEn": "Speed + DMG up",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "Boss房"
+    ],
+    "icon": "syringe",
+    "effect": "伤害 +1.0，移速 +0.2。",
+    "stats": [
+      "↑ 伤害 +1.0",
+      "↑ 移速 +0.2"
+    ],
+    "synergies": "计入嗑药套/针套 (Spun)，Boss 房最令人安心的纯正输出+移速双加道具。",
+    "transforms": [
+      "Spun"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 71,
+    "nameZh": "迷你蘑菇",
+    "aliases": [
+      "迷你菇",
+      "小蘑菇"
+    ],
+    "nameEn": "Mini Mush",
+    "quote": "速度及射程提升",
+    "quoteEn": "Speed up",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "mushroom",
+    "effect": "角色体型缩小（受击判定框减小），移速 +0.3，射程 +1.5。",
+    "stats": [
+      "受击判定缩小",
+      "↑ 移速 +0.3"
+    ],
+    "synergies": "计入蘑菇套 (Fun Guy)；更小的碰撞体积在精神错乱 (Delirium) 和教条的高密弹幕战中极实用。",
+    "transforms": [
+      "Fun Guy"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 72,
+    "nameZh": "念珠",
+    "aliases": [
+      "玫瑰念珠",
+      "十字架项链"
+    ],
+    "nameEn": "Rosary",
+    "quote": "信仰提升",
+    "quoteEn": "Faith up",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "天使房",
+      "宝箱房"
+    ],
+    "icon": "angel",
+    "effect": "获得 3 颗魂心，射速修正 +0.5，并将《圣经》混入所有道具池（一旦拾取或刷新过圣经即移出）。",
+    "stats": [
+      "↑ 魂心 +3",
+      "↑ 射速 +0.5"
+    ],
+    "synergies": "计入炽天使套 (Seraphim)；若之后在商店或图书馆见到圣经，摸一下即可计入书虫套并移出池子。",
+    "transforms": [
+      "Seraphim"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 73,
+    "nameZh": "肉块",
+    "aliases": [
+      "肉哥",
+      "一阶肉块"
+    ],
+    "nameEn": "Cube of Meat",
+    "quote": "肉块堆起来！",
+    "quoteEn": "Gotta meat 'em all",
+    "quality": 2,
+    "type": "familiar",
+    "pools": [],
+    "icon": "familiar",
+    "effect": "生成环绕肉块抵挡敌方子弹并造成每跳 7 点接触伤害。收集第 2/3/4 个会进化为射击肉头与肉哥跟班。",
+    "stats": [
+      "环绕挡弹",
+      "4阶进化肉哥"
+    ],
+    "synergies": "天启四骑士固定掉落，配合美德之书或土豆削皮刀可组建肉哥大军。",
+    "transforms": [],
+    "specialSources": [
+      "击败天启四骑士 (Harbingers) 固定掉落"
+    ],
+    "unlock": null
+  },
+  {
+    "id": 105,
+    "nameZh": "D6",
+    "aliases": [
+      "The D6",
+      "六面骰",
+      "红骰子",
+      "命运骰子"
+    ],
+    "nameEn": "The D6",
+    "quote": "重新掷出你的命运",
+    "quoteEn": "Reroll your destiny",
+    "quality": 4,
+    "type": "active",
+    "charge": "6格",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "dice",
+    "effect": "主动（6格充能）：重置当前房间内所有底座道具，替换为当前房间所属道具池中的新道具。",
+    "stats": [
+      "6格充能",
+      "重置底座道具"
+    ],
+    "synergies": "以撒的招牌初始主动（击败？？？后解锁）；在天使房炸雕像拿钥匙碎片后连滚两个底座，极易出圣心或神性。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用 ??? 击败以撒 (Isaac) 解锁"
+  },
+  {
+    "id": 114,
+    "nameZh": "妈刀",
+    "aliases": [
+      "妈妈的菜刀",
+      "母亲的菜刀",
+      "菜刀"
+    ],
+    "nameEn": "Mom's Knife",
+    "quote": "捅捅捅",
+    "quoteEn": "Stab stab stab",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "恶魔房",
+      "宝箱房"
+    ],
+    "icon": "knife",
+    "effect": "将眼泪替换为可蓄力投掷并自动回收的穿透菜刀，近战贴脸与投掷最远点停留时可造成毁灭性多段伤害。",
+    "stats": [
+      "极高单体DPS",
+      "无限穿透"
+    ],
+    "synergies": "计入妈套 (Yes Mother?)；与硫磺火结合在掷出菜刀后会额外喷射漫天飞刀雨。",
+    "transforms": [
+      "Mom"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 118,
+    "nameZh": "硫磺火",
+    "aliases": [
+      "血激光",
+      "硫磺",
+      "Brimstone"
+    ],
+    "nameEn": "Brimstone",
+    "quote": "血激光柱",
+    "quoteEn": "Blood laser barrage",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "恶魔房"
+    ],
+    "icon": "brimstone",
+    "effect": "蓄力后发射贯穿全屏的血红色激光柱，无视障碍物与护甲穿透所有敌人（《忏悔》完整一束造成 9 段角色面板伤害）。",
+    "stats": [
+      "全屏穿透血激光",
+      "9段高额判定"
+    ],
+    "synergies": "计入恶魔套/利维坦 (Leviathan)；搭配弯勺者变紫电追踪激光，搭配双硫磺火变为巨型粗激光且伤害再乘 1.2 倍。",
+    "transforms": [
+      "Leviathan"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 119,
+    "nameZh": "输血袋",
+    "aliases": [
+      "血袋",
+      "Blood Bag"
+    ],
+    "nameEn": "Blood Bag",
+    "quote": "生命提升",
+    "quoteEn": "HP up",
+    "quality": 2,
+    "type": "passive",
+    "pools": [],
+    "icon": "heart",
+    "effect": "红心容器 +1，恢复 4 颗红心，移速 +0.3（由献血机爆出获取）。",
+    "stats": [
+      "↑ 红心容器 +1",
+      "↑ 移速 +0.3",
+      "恢复 4 红心"
+    ],
+    "synergies": "在编号对照中紧邻 #118 硫磺火（119 → 118），是计数二十面骰 (#723) 最知名的编号跳板之一。",
+    "transforms": [],
+    "specialSources": [
+      "玩爆献血机 (Blood Donation Machine) 概率爆出"
+    ],
+    "unlock": null
+  },
+  {
+    "id": 145,
+    "nameZh": "嗝屁猫的头",
+    "aliases": [
+      "猫头",
+      "死猫头"
+    ],
+    "nameEn": "Guppy's Head",
+    "quote": "充能式苍蝇巢",
+    "quoteEn": "Reusable fly hive",
+    "quality": 2,
+    "type": "active",
+    "charge": "1格",
+    "pools": [
+      "恶魔房",
+      "诅咒房",
+      "红箱子"
+    ],
+    "icon": "guppy",
+    "effect": "主动（1格充能）：每次清理房间即可使用，生成 2~4 只造成双倍角色伤害的追踪蓝苍蝇。",
+    "stats": [
+      "1格充能",
+      "召唤2~4只蓝苍蝇"
+    ],
+    "synergies": "计入猫套 (Guppy)，摸一下即可拿到 1/3 嗝屁猫进度，前期清房伤害极高。",
+    "transforms": [
+      "Guppy"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 149,
+    "nameZh": "吐根",
+    "aliases": [
+      "吐根糖浆",
+      "绿毒爆泪"
+    ],
+    "nameEn": "Ipecac",
+    "quote": "爆炸射击",
+    "quoteEn": "Explosive shots",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "poison",
+    "effect": "直接赋予 +40 爆炸固定伤害加值，发射高抛物线绿色爆炸毒泪，可无限炸开石头与隐藏门，但贴脸会炸伤自己。",
+    "stats": [
+      "↑ 爆炸伤害 +40",
+      "无限开墙碎石"
+    ],
+    "synergies": "与纵火狂 (Pyromaniac) 或宿主帽结合后免疫自伤甚至能原地自炸回血。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 169,
+    "nameZh": "独眼巨人",
+    "aliases": [
+      "波吕斐摩斯",
+      "大眼",
+      "巨人眼"
+    ],
+    "nameEn": "Polyphemus",
+    "quote": "巨泪",
+    "quoteEn": "Mega tears",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "eye",
+    "effect": "伤害 +4 且总伤害 ×2，射速倍率 ×0.42。眼泪变得巨大无比，击杀敌人后剩余溢出的伤害会继续向前穿透。",
+    "stats": [
+      "↑ (伤害+4) × 2",
+      "溢出伤害穿透"
+    ],
+    "synergies": "配合谷底石可保留双倍巨伤而彻底消除 ×0.42 射速惩罚。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 182,
+    "nameZh": "圣心",
+    "aliases": [
+      "神圣之心",
+      "白心"
+    ],
+    "nameEn": "Sacred Heart",
+    "quote": "跟踪射击+攻击提升",
+    "quoteEn": "Homing shots + DMG up",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "天使房"
+    ],
+    "icon": "angel",
+    "effect": "红心容器 +1 并回满全部红心，总伤害 ×2.3 且额外 +1 伤害，赋予纯白强力追踪眼泪，射速 -0.4，弹速 -0.25。",
+    "stats": [
+      "↑ 总伤害 ×2.3",
+      "强力追踪",
+      "回满红心"
+    ],
+    "synergies": "计入炽天使套 (Seraphim)；天使房信仰之巅，拥有全游戏最高的独立常驻伤害倍率（×2.3）。",
+    "transforms": [
+      "Seraphim"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 183,
+    "nameZh": "牙签",
+    "aliases": [
+      "撑眼牙签",
+      "Toothpicks"
+    ],
+    "nameEn": "Toothpicks",
+    "quote": "射速+弹速提升",
+    "quoteEn": "Tears + shot speed up",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "Boss房"
+    ],
+    "icon": "syringe",
+    "effect": "射速修正 +0.7，弹速 +0.16，且以撒发射的眼泪外观变为红色血泪。",
+    "stats": [
+      "↑ 射速 +0.7",
+      "↑ 弹速 +0.16"
+    ],
+    "synergies": "Boss 房扎实射速装；在编号对照中紧邻 #182 圣心（183 → 182）。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 230,
+    "nameZh": "亚巴顿",
+    "aliases": [
+      "阿巴顿",
+      "深渊之王"
+    ],
+    "nameEn": "Abaddon",
+    "quote": "邪恶提升+伤害提升+恐惧性子弹",
+    "quoteEn": "Evil + DMG up + fear",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "恶魔房"
+    ],
+    "icon": "devil",
+    "effect": "伤害 +1.5，移速 +0.2，概率发射恐惧黑泪。《忏悔》中会将所有红心容器转化为黑心，并额外再送 2 颗黑心。",
+    "stats": [
+      "↑ 伤害 +1.5",
+      "红心转黑心+2",
+      "恐惧特效"
+    ],
+    "synergies": "计入恶魔套/利维坦 (Leviathan)；不再像旧版那样直接清空红心致死，性价比极高。",
+    "transforms": [
+      "Leviathan"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 245,
+    "nameZh": "20/20",
+    "aliases": [
+      "20/20 视力",
+      "双目镜",
+      "眼镜",
+      "平光镜"
+    ],
+    "nameEn": "20/20",
+    "quote": "双重射击",
+    "quoteEn": "Double shot",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "eye",
+    "effect": "每次攻击同时发射两发平行眼泪且完全不降射速。《忏悔》调整为单发伤害 ×0.8（总体仍净增 1.6 倍 DPS 与双倍触发频率）。",
+    "stats": [
+      "双发平行齐射",
+      "无射速惩罚"
+    ],
+    "synergies": "若同时拥有内眼或变异蜘蛛，20/20 会直接移除内眼/变异蜘蛛的射速惩罚！",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 284,
+    "nameZh": "D4",
+    "aliases": [
+      "四面骰",
+      "重置全身"
+    ],
+    "nameEn": "D4",
+    "quote": "重置成其他东西",
+    "quoteEn": "Reroll into something else",
+    "quality": 2,
+    "type": "active",
+    "charge": "6格",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "dice",
+    "effect": "主动（6格充能）：将角色身上所有被动道具重置为对应原道具池中的其他被动道具。",
+    "stats": [
+      "6格充能",
+      "全身被动重置"
+    ],
+    "synergies": "攒够几件天使房/恶魔房低品被动后一键重置，能直接洗出满身神装。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 301,
+    "nameZh": "巨蟹座",
+    "aliases": [
+      "巨蟹"
+    ],
+    "nameEn": "Cancer",
+    "quote": "生命提升+你感到被保护",
+    "quoteEn": "HP up + you feel protected",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "heart",
+    "effect": "立即获得 3 颗魂心；在当前房间受到第一次伤害后，本房间内后续受到的所有伤害均减半为半颗心（触发圣饼效果）。",
+    "stats": [
+      "↑ 魂心 +3",
+      "受伤后触发圣饼减伤"
+    ],
+    "synergies": "子宫层以后或迎战终局 Boss 时等同于多出成倍的容错空间。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 307,
+    "nameZh": "摩羯座",
+    "aliases": [
+      "山羊座",
+      "魔羯座"
+    ],
+    "nameEn": "Capricorn",
+    "quote": "全属性上升",
+    "quoteEn": "All stats up",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "star",
+    "effect": "全属性提升：红心容器 +1，伤害 +0.5，射速 +0.5（可破上限），移速 +0.1，射程 +0.75，并掉落硬币、炸弹、钥匙各 1 个。",
+    "stats": [
+      "↑ 全属性上升",
+      "↑ 破上限射速+0.5"
+    ],
+    "synergies": "毫无短板的星座全能神装，开局第一层拿到极其丝滑。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 331,
+    "nameZh": "神性",
+    "aliases": [
+      "神之头",
+      "三角眼",
+      "全视之眼"
+    ],
+    "nameEn": "Godhead",
+    "quote": "神之眼泪",
+    "quoteEn": "God tears",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "天使房"
+    ],
+    "icon": "angel",
+    "effect": "伤害 +0.5，射速 -0.3，弹速 -0.3，赋予追踪眼泪与神圣光环。光环对接触的敌人持续造成每秒高达 30 点的固定伤害。",
+    "stats": [
+      "神圣伤害光环",
+      "追踪眼泪"
+    ],
+    "synergies": "计入炽天使套 (Seraphim)；搭配穿透泪弹、高射速豆浆或分裂弹可让全屏被神圣光环覆盖。",
+    "transforms": [
+      "Seraphim"
+    ],
+    "specialSources": [],
+    "unlock": "使用游魂 (The Lost) 完成全部困难模式通关印记解锁"
+  },
+  {
+    "id": 347,
+    "nameZh": "复视",
+    "aliases": [
+      "复眼",
+      "双瞳",
+      "复制眼",
+      "Diplopia"
+    ],
+    "nameEn": "Diplopia",
+    "quote": "双份物品幻视",
+    "quoteEn": "Double item vision",
+    "quality": 3,
+    "type": "active",
+    "charge": "一次性",
+    "pools": [
+      "商店"
+    ],
+    "icon": "dice",
+    "effect": "一次性主动：将当前房间内的所有道具底座、掉落物和箱子原地复制一份（复制出来的恶魔房/商店道具全部免费拾取）。",
+    "stats": [
+      "一次性主动",
+      "全房间物品翻倍"
+    ],
+    "synergies": "在恶魔房复制硫磺火（双硫磺火巨型激光）或配合 ? 卡 (Wild Card) 实现无限复制。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 395,
+    "nameZh": "科技X",
+    "aliases": [
+      "科技 X",
+      "电圈",
+      "激光环"
+    ],
+    "nameEn": "Tech X",
+    "quote": "环形激光子弹",
+    "quoteEn": "Laser ring tears",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "tech",
+    "effect": "改为蓄力发射可穿透一切的绿色环形激光；蓄力时间决定圆环大小与伤害比例，激光环擦过敌人时造成高频多段电击。",
+    "stats": [
+      "穿透激光环",
+      "高频多段判定"
+    ],
+    "synergies": "与硫磺火结合变为血色硫磺火大圆环；与弯勺者结合后激光环会自动吸附在 Boss 身上持续切割。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 401,
+    "nameZh": "爆炸物",
+    "aliases": [
+      "爆炸泪",
+      "黏性炸弹",
+      "粘性炸弹泪"
+    ],
+    "nameEn": "Explosivo",
+    "quote": "黏性炸弹子弹",
+    "quoteEn": "Sticky bomb tears",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "poison",
+    "effect": "有最多 25% 概率发射黑色黏性炸弹泪，粘在敌人身上持续膨胀并在数秒后引爆造成 +60 额外巨额爆炸伤害，且绝不会炸伤角色自己。",
+    "stats": [
+      "黏性炸弹子弹",
+      "不自伤高爆"
+    ],
+    "synergies": "《忏悔》修复并加强了黏着期间的基础碰撞伤害，打大体型 Boss 极快。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 415,
+    "nameZh": "光之冠",
+    "aliases": [
+      "光明之冠",
+      "钻石王冠",
+      "蓝冠"
+    ],
+    "nameEn": "Crown of Light",
+    "quote": "无瑕给予力量",
+    "quoteEn": "The untainted gain power",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "天使房"
+    ],
+    "icon": "angel",
+    "effect": "获得 2 颗魂心。当角色红心全满（或无红心容器）且本房间未受过伤时，头顶王冠亮起，总伤害直接 ×2 且眼泪变为蓝色钻石。",
+    "stats": [
+      "↑ 无伤总伤害 ×2",
+      "↑ 魂心 +2"
+    ],
+    "synergies": "游魂、里游魂、？？？等纯魂心/无血容器角色等于全程常驻 2 倍总伤害。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 441,
+    "nameZh": "超级吐息",
+    "aliases": [
+      "超级激光",
+      "撒旦头",
+      "大硫磺火",
+      "巨型喷射"
+    ],
+    "nameEn": "Mega Blast",
+    "quote": "激光吐息",
+    "quoteEn": "Laser breath",
+    "quality": 4,
+    "type": "active",
+    "charge": "12格",
+    "pools": [
+      "恶魔房"
+    ],
+    "icon": "brimstone",
+    "effect": "主动（12格充能）：喷射持续整整 15 秒的超级撒旦巨型血柱激光，伤害恐怖并附带强力后坐力，且可以跨房间、跨楼层持续喷射！",
+    "stats": [
+      "12格充能",
+      "15秒跨房间巨型血柱"
+    ],
+    "synergies": "计入恶魔套/利维坦 (Leviathan)；开启后直接一路秒杀数个房间乃至整场最终 Boss 战。",
+    "transforms": [
+      "Leviathan"
+    ],
+    "specialSources": [],
+    "unlock": "使用全部 12 名非里化基础角色击败超级撒旦解锁"
+  },
+  {
+    "id": 562,
+    "nameZh": "谷底石",
+    "aliases": [
+      "谷底",
+      "触底",
+      "石头底座",
+      "人生谷底"
+    ],
+    "nameEn": "Rock Bottom",
+    "quote": "自此更上一层楼",
+    "quoteEn": "It's only up from there",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "隐藏房"
+    ],
+    "icon": "rock",
+    "effect": "锁定全属性峰值：角色所有面板属性永远锁定在历史达到过的最高值，任何负面降属性效果都不会再降低实际面板。",
+    "stats": [
+      "锁定历史最高面板",
+      "免疫属性下降"
+    ],
+    "synergies": "配合豆浆（锁住原伤害+5.5倍极速射速）、红杂烩（锁住+21.6满额伤害）、恶魔卡/力量卡永久保留加成。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用雅各与以扫完成 Boss Rush 解锁"
+  },
+  {
+    "id": 577,
+    "nameZh": "达摩克利斯之剑",
+    "aliases": [
+      "达摩克里斯之剑",
+      "悬剑",
+      "双倍剑"
+    ],
+    "nameEn": "Damocles",
+    "quote": "王的财富……但代价是什么？",
+    "quoteEn": "A king's fortune... but at what cost?",
+    "quality": 2,
+    "type": "active",
+    "charge": "一次性",
+    "pools": [
+      "恶魔房"
+    ],
+    "icon": "knife",
+    "effect": "一次性主动：在头顶悬挂宝剑，之后所有生成的道具底座都会额外多刷出 1 个免费底座；一旦受到非自残伤害，之后每 4 帧都有概率掉剑即死。",
+    "stats": [
+      "全流程底座道具翻倍",
+      "受伤触发掉剑判定"
+    ],
+    "synergies": "游魂与里游魂不会触发受伤掉剑判定，拿到等于零风险全流程双倍道具！",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用雅各与以扫击败羔羊 (The Lamb) 解锁"
+  },
+  {
+    "id": 581,
+    "nameZh": "灵能苍蝇",
+    "aliases": [
+      "超能苍蝇",
+      "精神苍蝇",
+      "紫苍蝇"
+    ],
+    "nameEn": "Psy Fly",
+    "quote": "苍蝇救援",
+    "quoteEn": "Flies to the rescue",
+    "quality": 4,
+    "type": "familiar",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "fly",
+    "effect": "最强防御跟班：自动高速冲向飞向以撒的敌方弹幕，将其拦截并转化为紫色追踪弹反击敌人。",
+    "stats": [
+      "自动高速挡弹",
+      "追踪弹反击"
+    ],
+    "synergies": "计入苍蝇套/别西卜 (Beelzebub)；几乎能让以撒在见证者 (Mother) 与祸兽 (The Beast) 的弹幕海里从容走位。",
+    "transforms": [
+      "Beelzebub"
+    ],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 584,
+    "nameZh": "美德之书",
+    "aliases": [
+      "美德书",
+      "灵火书",
+      "伯大尼的书"
+    ],
+    "nameEn": "Book of Virtues",
+    "quote": "灵魂伴侣",
+    "quoteEn": "Spiritual companion",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "天使房",
+      "图书馆"
+    ],
+    "icon": "book",
+    "effect": "独特副手主动：拾取后会垫在当前主动道具下方共存，每次使用主动道具都会召唤拥有专属特性的环绕灵火。",
+    "stats": [
+      "可与任意主动合体",
+      "召唤专属灵火"
+    ],
+    "synergies": "计入书虫套 (Bookworm)；与红钥匙、橡皮擦、硫磺火、D6 等百余种主动组合出不同灵火流派。",
+    "transforms": [
+      "Bookworm"
+    ],
+    "specialNote": "原版 1.7.9b 配置为被动道具（Passive）；无主动道具时可作为 4 格充能副手主动触发灵火，持有其他主动道具时自动垫在下方联动生效。",
+    "specialSources": [],
+    "unlock": "使用伯大尼 (Bethany) 击败以撒 (Isaac) 解锁"
+  },
+  {
+    "id": 588,
+    "nameZh": "太阳",
+    "aliases": [
+      "Sol",
+      "日神"
+    ],
+    "nameEn": "Sol",
+    "quote": "辉煌的胜利",
+    "quoteEn": "Radiant victory",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "在地图上直接标出 Boss 房位置；击败本层 Boss 后立即回满全部红心、充满主动道具、清除全层诅咒，且本层获得 +3 伤害与 +1 幸运。",
+    "stats": [
+      "透视Boss房",
+      "击杀Boss回满血+满充能"
+    ],
+    "synergies": "推荐先速推 Boss 拿满充能和全图视野，再回头逛商店和隐藏房。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 589,
+    "nameZh": "月亮",
+    "aliases": [
+      "Luna",
+      "月神",
+      "露娜"
+    ],
+    "nameEn": "Luna",
+    "quote": "月之祝福",
+    "quoteEn": "Blessing of the moon",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "每层额外多生成 1 个普通隐藏房和 1 个超级隐藏房；每个隐藏房内降下一束月光，触碰可获得半颗魂心并在本层大幅提升射速（首个+1，后续+0.5，破上限）。",
+    "stats": [
+      "每层4个隐藏房",
+      "↑ 月光破上限加射速"
+    ],
+    "synergies": "找谷底石、R键、死亡证明、故障王冠等隐藏房神器的最强辅助。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 590,
+    "nameZh": "水星",
+    "aliases": [
+      "Mercurius",
+      "墨丘利"
+    ],
+    "nameEn": "Mercurius",
+    "quote": "移速上升+灵巧机动",
+    "quoteEn": "Speed up + you feel elusive",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "移速 +0.4，进入有小怪的普通房间时所有门保持开启状态，无需清怪即可直接穿门跑图。",
+    "stats": [
+      "↑ 移速 +0.4",
+      "普通房间门常开"
+    ],
+    "synergies": "赶 20 分钟 Boss Rush 与 30 分钟死寂 (Hush) 限时门的无上跑图利器。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 591,
+    "nameZh": "金星",
+    "aliases": [
+      "Venus",
+      "维纳斯"
+    ],
+    "nameEn": "Venus",
+    "quote": "生命上升+美貌动人",
+    "quoteEn": "HP up + you feel pretty",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "红心容器 +1 并恢复 1 颗红心；靠近以撒身边的敌人会被粉色光环永久魅惑并互相残杀。",
+    "stats": [
+      "↑ 红心容器 +1",
+      "近身光环永久魅惑"
+    ],
+    "synergies": "专治各种高速冲脸蜘蛛与贴脸小怪。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 592,
+    "nameZh": "地球",
+    "aliases": [
+      "Terra",
+      "泰拉",
+      "大地"
+    ],
+    "nameEn": "Terra",
+    "quote": "生而为石",
+    "quoteEn": "Born to rock",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "伤害 +1，眼泪变为大小不一的岩石块（随机造成 0.5x~2x 伤害），附带极强击退，且子弹可直接打碎石头、火堆并轰开隐藏房墙壁！",
+    "stats": [
+      "岩石泪免费开隐藏",
+      "↑ 伤害 +1"
+    ],
+    "synergies": "从此实现炸弹自由，每层所有石头、骷髅头、隐藏房墙壁全部平A打穿。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 593,
+    "nameZh": "火星",
+    "aliases": [
+      "Mars",
+      "玛尔斯",
+      "战神"
+    ],
+    "nameEn": "Mars",
+    "quote": "双击冲刺",
+    "quoteEn": "Double tap dash",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "双击移动键向指定方向无敌猛冲，撞击敌人造成 4x 面板伤害并留下一串烈焰（冷却 3 秒）。",
+    "stats": [
+      "双击无敌冲刺",
+      "免费进出刺房"
+    ],
+    "synergies": "可利用冲刺无敌帧免费进出诅咒房刺门。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 594,
+    "nameZh": "木星",
+    "aliases": [
+      "Jupiter",
+      "朱庇特"
+    ],
+    "nameEn": "Jupiter",
+    "quote": "你是个气球",
+    "quoteEn": "You're a gas giant!",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "获得 2 个空红心容器并恢复半颗红心，完全免疫毒气伤害。站立不动时移速蓄力至 +0.5，移动时顺着尾迹喷射毒气云使敌人中毒。",
+    "stats": [
+      "↑ 心容器 +2",
+      "免疫毒素+喷射毒云"
+    ],
+    "synergies": "补齐星象房 11 星宿拼图，配合近战或绕圈走位可持续铺满毒雾。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 595,
+    "nameZh": "土星",
+    "aliases": [
+      "Saturnus",
+      "萨图恩"
+    ],
+    "nameEn": "Saturnus",
+    "quote": "眼泪之环",
+    "quoteEn": "Ring of tears",
+    "quality": 2,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "进入每个房间时，以撒脚下出现星环轨道并自动生成 7 发继承自身特效的环绕眼泪；敌方子弹飞过轨道时也有概率被捕获反制。",
+    "stats": [
+      "进房自带7发环绕泪"
+    ],
+    "synergies": "搭配高单发伤害（独眼巨人、圣心）进房直接贴脸转死一圈小怪。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 596,
+    "nameZh": "天王星",
+    "aliases": [
+      "Uranus",
+      "乌拉诺斯"
+    ],
+    "nameEn": "Uranus",
+    "quote": "冰冻眼泪",
+    "quoteEn": "Ice tears",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "发射冰晶眼泪，使敌人减速并在击杀时将其冻结成冰雕；冰雕被踢飞撞墙会爆出 10 发冰刺，且被冻死的敌人绝不会触发自爆或亡语分裂！",
+    "stats": [
+      "击杀冻结成冰雕",
+      "彻底封印怪物亡语"
+    ],
+    "synergies": "矿坑层、尸层自爆怪的绝对克星。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 597,
+    "nameZh": "海王星",
+    "aliases": [
+      "Neptunus",
+      "尼普顿"
+    ],
+    "nameEn": "Neptunus",
+    "quote": "开闸放水",
+    "quoteEn": "Open the floodgates",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "停止射击时以撒会自动鼓起腮帮积攒眼泪，再次按下射击键时将积攒的眼泪如高压水枪般瞬间倾泻而出。",
+    "stats": [
+      "停火自动蓄弹",
+      "进房瞬间倾泻爆发"
+    ],
+    "synergies": "完全无视部分蓄力硬直，跑图切房间清怪节奏极爽。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 598,
+    "nameZh": "冥王星",
+    "aliases": [
+      "Pluto",
+      "普鲁托"
+    ],
+    "nameEn": "Pluto",
+    "quote": "体型缩小",
+    "quoteEn": "Size down",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "星象房"
+    ],
+    "icon": "planet",
+    "effect": "射速修正 +0.7，并将以撒缩小到微米级体型，绝大部分水平飞来的敌方子弹会直接从头顶略过而无法命中！",
+    "stats": [
+      "↑ 射速 +0.7",
+      "微缩体型闪避平行弹幕"
+    ],
+    "synergies": "站立不动即可免疫大量平面弹幕。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "单局拾取 3 件星象相关道具解锁星象房后可遇"
+  },
+  {
+    "id": 625,
+    "nameZh": "巨型蘑菇",
+    "aliases": [
+      "超级蘑菇",
+      "巨大蘑菇",
+      "Mega Mush"
+    ],
+    "nameEn": "Mega Mush",
+    "quote": "我现在是个大男孩了！",
+    "quoteEn": "I'm a big boy now!",
+    "quality": 4,
+    "type": "active",
+    "charge": "12格",
+    "pools": [
+      "隐藏房",
+      "宝箱房"
+    ],
+    "icon": "mushroom",
+    "effect": "主动（12格充能）：30 秒内化身为顶天立地的巨型无敌以撒，直接用脚踩碎一切石头、Boss 与房门，近战践踏伤害高达每秒上百点，且跨房间持续。",
+    "stats": [
+      "12格充能",
+      "30秒无敌巨人践踏"
+    ],
+    "synergies": "计入蘑菇套 (Fun Guy)；全普通角色困难全红标解锁，开启后直接一路踹门踩穿整层。",
+    "transforms": [
+      "Fun Guy"
+    ],
+    "specialSources": [],
+    "unlock": "全非里化角色完成全部困难模式通关印记解锁"
+  },
+  {
+    "id": 628,
+    "nameZh": "死亡证明",
+    "aliases": [
+      "死神证明",
+      "全道具房",
+      "Death Certificate"
+    ],
+    "nameEn": "Death Certificate",
+    "quote": "我在哪……",
+    "quoteEn": "Where am I?",
+    "quality": 4,
+    "type": "active",
+    "charge": "一次性",
+    "pools": [
+      "隐藏房"
+    ],
+    "icon": "angel",
+    "effect": "一次性主动：传送至陈列着全游戏所有 700+ 已解锁道具的遗言走廊，你可以任意挑选全游戏任何一件道具拿走（拿取后其他底座消失），并搜刮房间内的掉落物。",
+    "stats": [
+      "全角色全红标终极奖励",
+      "全游戏道具任选其一"
+    ],
+    "synergies": "全游戏最强主动，缺输出拿圣心/剖腹产，缺续航或补印记拿 R键，想爽局拿故障王冠/谷底石。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "全 34 名角色完成全部困难模式通关印记解锁"
+  },
+  {
+    "id": 633,
+    "nameZh": "教条",
+    "aliases": [
+      "Dogma",
+      "电视机"
+    ],
+    "nameEn": "Dogma",
+    "quote": "飞升",
+    "quoteEn": "Ascend",
+    "quality": 3,
+    "type": "passive",
+    "pools": [],
+    "icon": "angel",
+    "effect": "赋予飞行能力、伤害 +2、移速 +0.1、保底补足至 6 颗心，并提供一次性的神圣斗篷护盾。",
+    "stats": [
+      "飞行+护盾+2伤害+补血"
+    ],
+    "synergies": "回溯线击败电视机教条 Boss 后自动赐予，助你迎战最终四天启与祸兽 (The Beast)。",
+    "transforms": [],
+    "specialSources": [
+      "回溯线击败教条 (Dogma) 后剧情固定赐予"
+    ],
+    "unlock": null
+  },
+  {
+    "id": 636,
+    "nameZh": "R键",
+    "aliases": [
+      "R 键",
+      "重开键",
+      "重启键",
+      "R Key"
+    ],
+    "nameEn": "R Key",
+    "quote": "是时候重头再来了",
+    "quoteEn": "Time to start over",
+    "quality": 4,
+    "type": "active",
+    "charge": "一次性",
+    "pools": [
+      "隐藏房"
+    ],
+    "icon": "dice",
+    "effect": "一次性主动：保留当前角色身上的全部道具、属性与基础掉落物，时光倒流重新回到第一层地下室再打一轮完整流程！",
+    "stats": [
+      "一次性主动",
+      "保留神装重开第一层"
+    ],
+    "synergies": "单局同时打完宝箱层/黑暗层 + 见证者或祸兽印记的终极神器；可用 #637 击退眼药水通过计数二十面骰滚出。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": null
+  },
+  {
+    "id": 637,
+    "nameZh": "击退眼药水",
+    "aliases": [
+      "拳击眼药水",
+      "安眠药",
+      "KO眼药水",
+      "Knockout Drops"
+    ],
+    "nameEn": "Knockout Drops",
+    "quote": "它们倒下了！",
+    "quoteEn": "They're out for the count!",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "tear",
+    "effect": "概率发射拳头眼泪，命中时造成 2 倍伤害与超强击退，把敌人狠狠轰飞撞向墙壁并追加撞墙伤害与眩晕。",
+    "stats": [
+      "拳头重击泪弹",
+      "强力击飞撞墙伤害"
+    ],
+    "synergies": "在编号对照中紧邻 #636 R键（637 → 636）。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用里拉撒路 (Tainted Lazarus) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 678,
+    "nameZh": "剖腹产",
+    "aliases": [
+      "C Section",
+      "灵体胎儿",
+      "鬼胎"
+    ],
+    "nameEn": "C Section",
+    "quote": "胎儿射击",
+    "quoteEn": "Fetus shots",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "宝箱房"
+    ],
+    "icon": "tear",
+    "effect": "发射自动追踪敌人的灵体胎儿，吸附在敌人身上持续挥拳造成高频伤害，且胎儿完美继承几乎所有攻击特效！",
+    "stats": [
+      "自动追踪持续撕咬",
+      "全特效完美继承"
+    ],
+    "synergies": "计入妈套 (Yes Mother?)；握着菜刀的胎儿（配合妈刀）、戴着光环的胎儿（配合神性）、挥舞灵剑的胎儿（配合魂剑）皆为版本T0天花板。",
+    "transforms": [
+      "Mom"
+    ],
+    "specialSources": [],
+    "unlock": "使用莉莉丝 (Lilith) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 679,
+    "nameZh": "小亚巴顿",
+    "aliases": [
+      "暗黑亚玻伦",
+      "小阿巴顿",
+      "暗灵",
+      "Lil Abaddon"
+    ],
+    "nameEn": "Lil Abaddon",
+    "quote": "深渊跟班",
+    "quoteEn": "Abyssal friend",
+    "quality": 2,
+    "type": "familiar",
+    "pools": [
+      "恶魔房"
+    ],
+    "icon": "devil",
+    "effect": "跟随以撒的深渊小恶魔跟班，按住射击键蓄力并在松开时释放一圈黑色微型硫磺火环。",
+    "stats": [
+      "蓄力黑激光环跟班",
+      "计入连体套"
+    ],
+    "synergies": "计入连体套 (Conjoined)；在编号对照中紧邻 #678 剖腹产（679 → 678）。",
+    "transforms": [
+      "Conjoined"
+    ],
+    "specialSources": [],
+    "unlock": "使用里阿萨谢勒 (Tainted Azazel) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 689,
+    "nameZh": "故障王冠",
+    "aliases": [
+      "错误皇冠",
+      "错误王冠",
+      "乱码王冠",
+      "Glitched Crown"
+    ],
+    "nameEn": "Glitched Crown",
+    "quote": "?????",
+    "quoteEn": "?????",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "隐藏房"
+    ],
+    "icon": "dice",
+    "effect": "之后生成的所有道具底座都会以每秒 5 个的速度在 5 件随机道具之间循环切换，看准时机触碰即可拿取心仪的那一件。",
+    "stats": [
+      "所有底座变为5选1"
+    ],
+    "synergies": "站在底座旁紧盯目标道具的前一帧按暂停再贴上去，即可 100% 稳定拿取神装。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用里以撒 (Tainted Isaac) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 691,
+    "nameZh": "神圣宝珠",
+    "aliases": [
+      "圣洁宝珠",
+      "白宝珠",
+      "Sacred Orb"
+    ],
+    "nameEn": "Sacred Orb",
+    "quote": "命运在等待",
+    "quoteEn": "Destiny awaits",
+    "quality": 4,
+    "type": "passive",
+    "pools": [
+      "隐藏房",
+      "天使房"
+    ],
+    "icon": "angel",
+    "effect": "所有道具池彻底屏蔽 Q0 与 Q1 品质的低质道具，且刷出 Q2 品质道具时也有 33% 概率自动重随为更高品质道具。",
+    "stats": [
+      "彻底屏蔽Q0/Q1道具",
+      "高概率全Q3/Q4神装"
+    ],
+    "synergies": "越早拿到越无敌，后续每个宝箱房、天使房、隐藏房几乎全是高品神器。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用里游魂 (Tainted Lost) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 692,
+    "nameZh": "血色羁绊",
+    "aliases": [
+      "血之契约",
+      "猩红契约",
+      "Sanguine Bond"
+    ],
+    "nameEn": "Sanguine Bond",
+    "quote": "祂渴望你的鲜血",
+    "quoteEn": "He awaits your offering",
+    "quality": 1,
+    "type": "passive",
+    "pools": [
+      "恶魔房",
+      "诅咒房"
+    ],
+    "icon": "devil",
+    "effect": "每层恶魔房中央额外生成一个献祭地刺，踩刺献祭有概率直接获得黑心、硬币、永久伤害提升、恶魔房道具或利维坦变身进度。",
+    "stats": [
+      "恶魔房专属献祭刺",
+      "概率刷永久伤害/恶魔道具"
+    ],
+    "synergies": "在编号对照中紧邻 #691 神圣宝珠（692 → 691）。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用里犹大 (Tainted Judas) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 698,
+    "nameZh": "扭曲双子",
+    "aliases": [
+      "双子恶魔",
+      "邪恶双子",
+      "双胞胎跟班",
+      "Twisted Pair"
+    ],
+    "nameEn": "Twisted Pair",
+    "quote": "双倍麻烦",
+    "quoteEn": "Double trouble",
+    "quality": 4,
+    "type": "familiar",
+    "pools": [
+      "恶魔房"
+    ],
+    "icon": "devil",
+    "effect": "召唤一对紧贴在以撒左右肩头的小恶魔双胞胎，同步发射完全继承以撒泪弹特效的子弹（每只造成 37.5% 面板伤害，合起来额外提供 +75% 总火力）。",
+    "stats": [
+      "贴身双子同步射击",
+      "+75%总输出火力"
+    ],
+    "synergies": "计入连体套 (Conjoined)；弹道紧贴本体不飘移，配合硫磺火、科技X、剖腹产如同三管加特林。",
+    "transforms": [
+      "Conjoined"
+    ],
+    "specialSources": [],
+    "unlock": "使用里莉莉丝 (Tainted Lilith) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 700,
+    "nameZh": "回音室",
+    "aliases": [
+      "回声室",
+      "Echo Chamber"
+    ],
+    "nameEn": "Echo Chamber",
+    "quote": "我能看见未来",
+    "quoteEn": "I can see the future",
+    "quality": 3,
+    "type": "passive",
+    "pools": [
+      "隐藏房"
+    ],
+    "icon": "psychic",
+    "effect": "拾取后，每次使用卡牌、符文或胶囊时，都会按顺序额外重放此前使用过的最近 3 个消耗品效果。",
+    "stats": [
+      "消耗品连环重放×3"
+    ],
+    "synergies": "只要先吃一颗属性上升胶囊或灵魂石、耶拉符文 (Jera)，后续随便用任何卡牌都会连环复读叠加！",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用里亚玻伦 (Tainted Apollyon) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 721,
+    "nameZh": "TMTRAINER",
+    "aliases": [
+      "错误训练师",
+      "乱码训练师",
+      "宝可梦训练师",
+      "TM训练师"
+    ],
+    "nameEn": "TMTRAINER",
+    "quote": "以撒和他的妈妈……",
+    "quoteEn": "Isaac and his mother...",
+    "quality": 0,
+    "type": "passive",
+    "pools": [
+      "隐藏房"
+    ],
+    "icon": "glitch",
+    "effect": "将整局游戏后续所有底座道具彻底替换为随机拼接底层代码的「乱码错误道具」，触发条件与效果天马行空。",
+    "stats": [
+      "全道具代码乱码化",
+      "混沌节目效果拉满"
+    ],
+    "synergies": "EID 简体中文模组保留原名 TMTRAINER（玩家俗称乱码训练师/错误训练师），挑战 #45 DELETE THIS 的核心本体。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用里伊甸 (Tainted Eden) 击败祸兽 (The Beast) 解锁"
+  },
+  {
+    "id": 723,
+    "nameZh": "计数二十面骰",
+    "aliases": [
+      "倒转骰子",
+      "回旋骰",
+      "下旋骰",
+      "减一骰子",
+      "Spindown Dice"
+    ],
+    "nameEn": "Spindown Dice",
+    "quote": "向下旋转！",
+    "quoteEn": "Spin down!",
+    "quality": 4,
+    "type": "active",
+    "charge": "6格",
+    "pools": [
+      "隐藏房",
+      "宝箱房"
+    ],
+    "icon": "dice",
+    "effect": "主动（6格充能）：使当前房间内所有底座道具的内部编号精确减 1（自动跳过尚未解锁的编号）。完全可控的逆天改命神器！",
+    "stats": [
+      "6格充能",
+      "道具ID精确减1"
+    ],
+    "synergies": "按原版 1.7.9b 编号顺序对照：#119 输血袋 → #118 硫磺火；#183 牙签 → #182 圣心；#679 小亚巴顿 → #678 剖腹产；#692 血色羁绊 → #691 神圣宝珠；#637 击退眼药水 → #636 R键。实际局内重随会跳过未解锁道具，且挑战/每日挑战模式下会跳过禁用道具。",
+    "transforms": [],
+    "specialSources": [],
+    "unlock": "使用里以撒 (Tainted Isaac) 击败精神错乱 (Delirium) 解锁"
+  }
+]

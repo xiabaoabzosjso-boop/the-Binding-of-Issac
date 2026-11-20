@@ -1,22 +1,64 @@
-local mod = RegisterMod("MyGoodTrip", 1)
-Isaac.DebugString("[MyGoodTrip] main.lua loaded")
+local mod = RegisterMod("GoodTrip Plus", 1)
 
-local ROOM_GRID_WIDTH = 13
-local MAP_ORIGIN_X = 20
-local MAP_ORIGIN_Y = 40
-local MAP_CELL_SIZE = 10
-local DIRECTION_REPEAT_DELAY = 300
-local DIRECTION_REPEAT_INTERVAL = 120
+local MAIN_DIMENSION = 0
+local FLOOR_GRID_SIZE = 13 * 13
+local MENU_X, MENU_Y = 18, 45
+local MENU_ROWS = 8
+local GRID_TILE_SIZE = 40
+local REPEAT_DELAY, REPEAT_INTERVAL = 300, 120
 
-local leftWasDown = false
-local selectedRoomIndex = nil
-local mapControllerIndex = nil
-local heldDirectionX = 0
-local heldDirectionY = 0
-local nextDirectionTime = 0
-local pendingRoomIndex = nil
+local text = {
+    title = {"GoodTrip Plus", "GoodTrip Plus"},
+    help = {"上下选房，确认传送，松开地图键关闭", "Up/Down: select | Confirm | Release map: close"},
+    start = {"初始房", "Starting Room"},
+    treasure = {"宝箱房", "Treasure Room"},
+    shop = {"商店", "Shop"},
+    boss = {"首领房", "Boss Room"},
+    anchor = {"返回锚点", "Anchor"},
+    mark = {"把当前房设为锚点", "Mark this room"},
+    anchorSet = {"锚点已设置在当前房", "Anchor set in this room"},
+    combat = {"清理当前房间后才能传送", "Clear this room before teleporting"},
+    controls = {"恢复角色控制后才能传送", "Wait until player controls are available"},
+    dimension = {"仅主世界的普通楼层房间可用", "Main dimension floor rooms only"},
+    ascent = {"回家流程中暂停传送", "Teleportation unavailable during Ascent or Home"},
+    greed = {"贪婪模式中暂停传送", "Teleportation unavailable in Greed mode"},
+    lost = {"迷失诅咒期间暂停传送", "Teleportation blocked by Curse of the Lost"},
+    curseRoom = {"请从刺房的门离开", "Leave the Curse Room through its door"},
+    specialRoom = {"当前房间有特殊流程，请从门离开", "Leave this special room normally"},
+    specialDoor = {"恶魔房或天使房的门已开，请先走门", "Use the open Devil or Angel door first"},
+    invalidTarget = {"目标房间暂时无法传送", "Destination is no longer available"},
+    unsafeOrigin = {"当前房间找不到可用于返回的落点", "No clear landing tile in this room"},
+    returned = {"目标房找不到合适落点，已返回原房", "No clear landing tile; returned to origin"},
+    failed = {"传送中止，请使用房间的门", "Teleport stopped; use the room doors"},
+}
 
-local blockedMapActions = {
+local quickRooms = {
+    [RoomType.ROOM_TREASURE] = {order = 2, name = text.treasure},
+    [RoomType.ROOM_SHOP] = {order = 3, name = text.shop},
+    [RoomType.ROOM_BOSS] = {order = 4, name = text.boss},
+}
+local startingRoom = {order = 1, name = text.start}
+
+local allowedRooms = {
+    [RoomType.ROOM_DEFAULT] = true,
+    [RoomType.ROOM_TREASURE] = true,
+    [RoomType.ROOM_SHOP] = true,
+    [RoomType.ROOM_BOSS] = true,
+    [RoomType.ROOM_MINIBOSS] = true,
+    [RoomType.ROOM_SECRET] = true,
+    [RoomType.ROOM_SUPERSECRET] = true,
+    [RoomType.ROOM_ULTRASECRET] = true,
+    [RoomType.ROOM_ARCADE] = true,
+    [RoomType.ROOM_LIBRARY] = true,
+    [RoomType.ROOM_SACRIFICE] = true,
+    [RoomType.ROOM_ISAACS] = true,
+    [RoomType.ROOM_BARREN] = true,
+    [RoomType.ROOM_CHEST] = true,
+    [RoomType.ROOM_DICE] = true,
+    [RoomType.ROOM_PLANETARIUM] = true,
+}
+
+local blockedActions = {
     [ButtonAction.ACTION_LEFT] = true,
     [ButtonAction.ACTION_RIGHT] = true,
     [ButtonAction.ACTION_UP] = true,
@@ -31,394 +73,521 @@ local blockedMapActions = {
     [ButtonAction.ACTION_DROP] = true,
 }
 
-local function canTeleport(roomCleared, currentRoomIndex, targetRoomIndex)
-    if roomCleared and currentRoomIndex ~= targetRoomIndex then
-        return true
-    end
+local landingObstacles = {
+    [EntityType.ENTITY_BOMB] = true,
+    [EntityType.ENTITY_EFFECT] = true,
+    [EntityType.ENTITY_FIREPLACE] = true,
+    [EntityType.ENTITY_PICKUP] = true,
+    [EntityType.ENTITY_PROJECTILE] = true,
+    [EntityType.ENTITY_SLOT] = true,
+}
 
+local gridSteps = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}
+
+local menuFont = Font()
+local fontLoaded = pcall(function()
+    menuFont:Load("font/cjk/lanapixel.fnt")
+end) and menuFont:IsLoaded()
+local rowHeight = fontLoaded and math.max(12, menuFont:GetLineHeight() + 1) or 12
+
+local anchor
+local pendingChoice
+local menuController
+local highlightedEntry
+local selection = 1
+local heldDirection = 0
+local nextRepeatTime = 0
+local waitForRelease = false
+local notice, noticeUntil
+
+local function getMainRoom(level, index, listIndex)
+    if index < 0 or index >= FLOOR_GRID_SIZE then
+        return nil
+    end
+    local desc = level:GetRoomByIdx(index, MAIN_DIMENSION)
+    if desc and desc.Data and desc.SafeGridIndex == index and desc.ListIndex == listIndex then
+        return desc
+    end
+end
+
+local function getCurrentMainRoom(level)
+    local index = level:GetCurrentRoomIndex()
+    if index < 0 or index >= FLOOR_GRID_SIZE then
+        return nil
+    end
+    local current = level:GetCurrentRoomDesc()
+    return getMainRoom(level, current.SafeGridIndex, current.ListIndex)
+end
+
+local function getEligibleTarget(level, index, listIndex)
+    local desc = getMainRoom(level, index, listIndex)
+    if desc and desc.VisitedCount > 0 and desc.Clear and allowedRooms[desc.Data.Type] then
+        return desc
+    end
+end
+
+local function hasOpenSpecialDoor(room)
+    for slot = 0, DoorSlot.NUM_DOOR_SLOTS - 1 do
+        local door = room:GetDoor(slot)
+        if door and door:IsOpen() and (door.TargetRoomType == RoomType.ROOM_DEVIL
+            or door.TargetRoomType == RoomType.ROOM_ANGEL or door.TargetRoomIndex == GridRooms.ROOM_DEVIL_IDX) then
+            return true
+        end
+    end
     return false
 end
 
-local function isEligibleTarget(room)
-    return room.visitedCount >= 1 and room.clear == true
-end
-
-local function canTeleportToRoom(roomCleared, currentRoomIndex, room)
-    return isEligibleTarget(room)
-        and canTeleport(roomCleared, currentRoomIndex, room.index)
-end
-
-local function getTeleportTargets(roomCleared, currentRoomIndex, rooms)
-    local targets = {}
-
-    for _, room in ipairs(rooms) do
-        if canTeleportToRoom(roomCleared, currentRoomIndex, room) then
-            table.insert(targets, room)
-        end
+local function getBlockReason(game, level, current)
+    if level:IsAscent() or level:GetStage() == LevelStage.STAGE8
+        or game:GetStateFlag(GameStateFlag.STATE_BACKWARDS_PATH_INIT) then
+        return text.ascent
     end
-
-    return targets
+    if game:IsGreedMode() then
+        return text.greed
+    end
+    if not current then
+        return text.dimension
+    end
+    if current.Data.Type == RoomType.ROOM_CURSE then
+        return text.curseRoom
+    end
+    if not allowedRooms[current.Data.Type] then
+        return text.specialRoom
+    end
+    if (level:GetCurses() & LevelCurse.CURSE_OF_THE_LOST) ~= 0 then
+        return text.lost
+    end
+    local room = game:GetRoom()
+    if not room:IsClear() or room:IsAmbushActive() then
+        return text.combat
+    end
+    if hasOpenSpecialDoor(room) then
+        return text.specialDoor
+    end
+    local player = Isaac.GetPlayer(0)
+    if player:IsDead() or not player:AreControlsEnabled() then
+        return text.controls
+    end
 end
 
-local function readFloorRooms(level)
-    local descriptors = level:GetRooms()
-    local rooms = {}
-
-    for i = 0, descriptors.Size - 1 do
-        local desc = descriptors:Get(i)
-
-        if desc.Data ~= nil and desc.SafeGridIndex >= 0 then
-            local roomAtIndex = level:GetRoomByIdx(desc.SafeGridIndex)
-
-            if roomAtIndex.Data ~= nil and roomAtIndex.ListIndex == desc.ListIndex then
-                table.insert(rooms, {
-                    index = desc.SafeGridIndex,
-                    visitedCount = desc.VisitedCount,
-                    clear = desc.Clear,
-                    isOneByOne = desc.Data.Shape == RoomShape.ROOMSHAPE_1x1,
-                })
+local function buildEntries(level, current, floorSeed)
+    local entries, counts = {}, {}
+    local startingIndex = level:GetStartingRoomIndex()
+    local rooms = level:GetRooms()
+    for i = 0, rooms.Size - 1 do
+        local desc = rooms:Get(i)
+        if desc and desc.Data and desc.ListIndex ~= current.ListIndex then
+            local group = desc.SafeGridIndex == startingIndex and startingRoom or quickRooms[desc.Data.Type]
+            if group and getEligibleTarget(level, desc.SafeGridIndex, desc.ListIndex) then
+                entries[#entries + 1] = {
+                    name = group.name, order = group.order, roomIndex = desc.SafeGridIndex, listIndex = desc.ListIndex,
+                }
+                counts[group.order] = (counts[group.order] or 0) + 1
             end
         end
     end
-
-    return rooms
-end
-
-local function buildMapCells(rooms, originX, originY, cellSize)
-    local cells = {}
-
-    for _, room in ipairs(rooms) do
-        if room.visitedCount > 0 and room.isOneByOne then
-            local column = room.index % ROOM_GRID_WIDTH
-            local row = room.index // ROOM_GRID_WIDTH
-
-            table.insert(cells, {
-                index = room.index,
-                x = originX + column * cellSize,
-                y = originY + row * cellSize,
-                size = cellSize,
-                clear = room.clear,
-            })
+    table.sort(entries, function(left, right)
+        if left.order == right.order then
+            return left.roomIndex < right.roomIndex
+        end
+        return left.order < right.order
+    end)
+    local seen = {}
+    for _, entry in ipairs(entries) do
+        if counts[entry.order] > 1 then
+            seen[entry.order] = (seen[entry.order] or 0) + 1
+            entry.suffix = " #" .. seen[entry.order]
         end
     end
-
-    return cells
-end
-
-local function getClickedRoomIndex(cells, mouseX, mouseY)
-    for _, cell in ipairs(cells) do
-        local insideX = mouseX >= cell.x and mouseX < cell.x + cell.size
-        local insideY = mouseY >= cell.y and mouseY < cell.y + cell.size
-
-        if insideX and insideY then
-            return cell.index
-        end
+    if anchor and anchor.floorSeed == floorSeed and anchor.listIndex ~= current.ListIndex
+        and getEligibleTarget(level, anchor.roomIndex, anchor.listIndex) then
+        entries[#entries + 1] = {name = text.anchor, roomIndex = anchor.roomIndex, listIndex = anchor.listIndex}
     end
-
-    return nil
+    entries[#entries + 1] = {name = text.mark, markAnchor = true}
+    return entries
 end
 
-local function findTeleportTarget(targets, selectedRoomIndex)
-    for _, room in ipairs(targets) do
-        if room.index == selectedRoomIndex then
-            return room
-        end
-    end
-
-    return nil
-end
-
-local function isOnMainMap(level)
-    local index = level:GetCurrentRoomIndex()
-    if index < 0 or index >= ROOM_GRID_WIDTH * ROOM_GRID_WIDTH then
+local function isClearLandingTile(room, gridIndex, position, radius)
+    if room:GetGridEntity(gridIndex) or room:GetGridCollision(gridIndex) ~= GridCollisionClass.COLLISION_NONE
+        or not room:IsPositionInRoom(position, radius) then
         return false
     end
-
-    local current = level:GetCurrentRoomDesc()
-    local mainRoom = level:GetRoomByIdx(current.SafeGridIndex, 0)
-    return mainRoom.Data ~= nil and mainRoom.ListIndex == current.ListIndex
+    local neighborRange = math.floor(radius / GRID_TILE_SIZE + 0.5)
+    if neighborRange == 0 then
+        return true
+    end
+    for x = -neighborRange, neighborRange do
+        for y = -neighborRange, neighborRange do
+            local nearby = Vector(position.X + x * GRID_TILE_SIZE, position.Y + y * GRID_TILE_SIZE)
+            if room:GetGridEntityFromPos(nearby) or room:GetGridCollisionAtPos(nearby) ~= GridCollisionClass.COLLISION_NONE then
+                return false
+            end
+        end
+    end
+    return true
 end
 
-local function handleMapClick(cells, targets)
-    local mouse = Isaac.WorldToScreen(Input.GetMousePosition(true))
-    local clickedRoomIndex = getClickedRoomIndex(cells, mouse.X, mouse.Y)
-    if clickedRoomIndex == nil then
+local function getHitboxRadius(entity)
+    local scale = entity.SizeMulti
+    if scale then
+        return entity.Size * math.max(1, math.abs(scale.X), math.abs(scale.Y))
+    end
+    return entity.Size
+end
+
+local function offsetTile(position, step)
+    return Vector(position.X + step[1] * GRID_TILE_SIZE, position.Y + step[2] * GRID_TILE_SIZE)
+end
+
+local function checkLandingObstacles(position, safeRadius, obstacles)
+    local canLand = true
+    for _, obstacle in ipairs(obstacles) do
+        if position:DistanceSquared(obstacle.position) <= (obstacle.radius + safeRadius + 6)^2 then
+            if obstacle.blocksWalking then
+                return false, false
+            end
+            canLand = false
+        end
+    end
+    return true, canLand
+end
+
+local function getLandingPosition(game, room, fallbackPosition)
+    local safeRadius = 16
+    for i = 0, game:GetNumPlayers() - 1 do
+        safeRadius = math.max(safeRadius, getHitboxRadius(Isaac.GetPlayer(i)) + 3)
+    end
+
+    local obstacles = {}
+    for _, entity in ipairs(Isaac.GetRoomEntities()) do
+        if landingObstacles[entity.Type] or entity:IsActiveEnemy(false) then
+            obstacles[#obstacles + 1] = {
+                position = entity.Position,
+                radius = getHitboxRadius(entity),
+                blocksWalking = entity.Type ~= EntityType.ENTITY_PICKUP,
+            }
+        end
+    end
+
+    local gridSize = room:GetGridSize()
+    local queue, visited = {}, {}
+    local function enqueue(position)
+        if not room:IsPositionInRoom(position, 0) then
+            return
+        end
+        local gridIndex = room:GetGridIndex(position)
+        if gridIndex >= 0 and gridIndex < gridSize and not visited[gridIndex] then
+            visited[gridIndex] = true
+            queue[#queue + 1] = gridIndex
+        end
+    end
+
+    for slot = 0, DoorSlot.NUM_DOOR_SLOTS - 1 do
+        local door = room:GetDoor(slot)
+        if door and door:IsOpen() and door.TargetRoomIndex >= 0 and door.TargetRoomIndex < FLOOR_GRID_SIZE then
+            local inward = gridSteps[slot % #gridSteps + 1]
+            enqueue(offsetTile(room:GetDoorSlotPosition(slot), inward))
+        end
+    end
+    if fallbackPosition then
+        enqueue(fallbackPosition)
+    end
+
+    local cursor = 1
+    while cursor <= #queue do
+        local gridIndex = queue[cursor]
+        local position = room:GetGridPosition(gridIndex)
+        if isClearLandingTile(room, gridIndex, position, safeRadius) then
+            local canWalk, canLand = checkLandingObstacles(position, safeRadius, obstacles)
+            if canLand then
+                return position
+            end
+            if canWalk then
+                for _, step in ipairs(gridSteps) do
+                    enqueue(offsetTile(position, step))
+                end
+            end
+        end
+        cursor = cursor + 1
+    end
+end
+
+local function landInCurrentRoom(game, fallbackPosition)
+    local room = game:GetRoom()
+    if not room:IsClear() or room:IsAmbushActive() then
+        return false
+    end
+    local position = getLandingPosition(game, room, fallbackPosition)
+    if not position then
+        return false
+    end
+    for i = 0, game:GetNumPlayers() - 1 do
+        local player = Isaac.GetPlayer(i)
+        player.Position = position
+        player.Velocity = Vector.Zero
+    end
+    return true
+end
+
+local function showNotice(message)
+    notice, noticeUntil = message, Isaac.GetTime() + 2200
+end
+
+local function changeRoom(game, level, index, floorSeed)
+    local previousRoom = level:GetCurrentRoomDesc().ListIndex
+    local previousDoor = level.LeaveDoor
+    level.LeaveDoor = -1
+    game:ChangeRoom(index, MAIN_DIMENSION)
+
+    local reachedLevel = game:GetLevel()
+    local reached = getCurrentMainRoom(reachedLevel)
+    if not reached or reachedLevel:GetDungeonPlacementSeed() ~= floorSeed then
+        return nil
+    end
+    if reached.ListIndex == previousRoom then
+        reachedLevel.LeaveDoor = previousDoor
+    end
+    return reached, reachedLevel
+end
+
+local function teleport(game, level, origin, destination, floorSeed)
+    local originLanding = getLandingPosition(game, game:GetRoom(), Isaac.GetPlayer(0).Position)
+    if not originLanding then
+        showNotice(text.unsafeOrigin)
         return
     end
-
-    selectedRoomIndex = clickedRoomIndex
-    local target = findTeleportTarget(targets, selectedRoomIndex)
-    if target ~= nil then
-        pendingRoomIndex = target.index
+    local originIndex, originListIndex = origin.SafeGridIndex, origin.ListIndex
+    local targetIndex, targetListIndex = destination.SafeGridIndex, destination.ListIndex
+    local current, reachedLevel = changeRoom(game, level, targetIndex, floorSeed)
+    if not current then
+        showNotice(text.failed)
+        return
     end
+    if current.SafeGridIndex == targetIndex and current.ListIndex == targetListIndex and landInCurrentRoom(game) then
+        return
+    end
+    if current.ListIndex ~= originListIndex and getMainRoom(reachedLevel, originIndex, originListIndex) then
+        current = changeRoom(game, reachedLevel, originIndex, floorSeed)
+        if current and current.SafeGridIndex == originIndex and current.ListIndex == originListIndex
+            and landInCurrentRoom(game, originLanding) then
+            showNotice(text.returned)
+            return
+        end
+    end
+    showNotice(text.failed)
 end
 
-local function getMapControllerIndex()
-    local controllerIndex = Isaac.GetPlayer(0).ControllerIndex
-    if Input.IsActionPressed(ButtonAction.ACTION_MAP, controllerIndex) then
-        return controllerIndex
+local function getMenuController()
+    local controller = Isaac.GetPlayer(0).ControllerIndex
+    if Input.IsActionPressed(ButtonAction.ACTION_MAP, controller) then
+        return controller
     end
-
-    if Input.IsActionPressed(ButtonAction.ACTION_MAP, 0)
-        or Input.IsButtonPressed(Keyboard.KEY_TAB, 0) then
+    if Input.IsButtonPressed(Keyboard.KEY_TAB, 0) or Input.IsActionPressed(ButtonAction.ACTION_MAP, 0) then
         return 0
     end
 end
 
-local function resetMapSelection()
-    selectedRoomIndex = nil
-    mapControllerIndex = nil
-    heldDirectionX = 0
-    heldDirectionY = 0
-    nextDirectionTime = 0
+local function resetMenu()
+    menuController, highlightedEntry = nil, nil
+    selection, heldDirection, nextRepeatTime = 1, 0, 0
 end
 
-local function getNavigationDirection(controllerIndex)
-    local horizontal = Input.GetActionValue(ButtonAction.ACTION_RIGHT, controllerIndex)
-        - Input.GetActionValue(ButtonAction.ACTION_LEFT, controllerIndex)
-    local vertical = Input.GetActionValue(ButtonAction.ACTION_DOWN, controllerIndex)
-        - Input.GetActionValue(ButtonAction.ACTION_UP, controllerIndex)
-
-    if controllerIndex == 0 then
-        if Input.IsButtonPressed(Keyboard.KEY_RIGHT, 0) then
-            horizontal = horizontal + 1
-        end
-        if Input.IsButtonPressed(Keyboard.KEY_LEFT, 0) then
-            horizontal = horizontal - 1
-        end
-        if Input.IsButtonPressed(Keyboard.KEY_DOWN, 0) then
-            vertical = vertical + 1
-        end
-        if Input.IsButtonPressed(Keyboard.KEY_UP, 0) then
-            vertical = vertical - 1
-        end
+local function findHighlightedRow(entries)
+    if not highlightedEntry then
+        return nil
     end
-
-    if math.abs(horizontal) < 0.5 and math.abs(vertical) < 0.5 then
-        return 0, 0
-    end
-
-    if math.abs(horizontal) >= math.abs(vertical) then
-        return horizontal > 0 and 1 or -1, 0
-    end
-
-    return 0, vertical > 0 and 1 or -1
-end
-
-local function moveMapSelection(cells, directionX, directionY)
-    local column = selectedRoomIndex % ROOM_GRID_WIDTH
-    local row = selectedRoomIndex // ROOM_GRID_WIDTH
-    local bestIndex = selectedRoomIndex
-    local bestScore = math.huge
-
-    for _, cell in ipairs(cells) do
-        local offsetX = cell.index % ROOM_GRID_WIDTH - column
-        local offsetY = cell.index // ROOM_GRID_WIDTH - row
-        local forward = offsetX * directionX + offsetY * directionY
-        local sideways = math.abs(offsetX * directionY - offsetY * directionX)
-        local score = forward + sideways * ROOM_GRID_WIDTH
-
-        if forward > 0 and score < bestScore then
-            bestIndex = cell.index
-            bestScore = score
-        end
-    end
-
-    selectedRoomIndex = bestIndex
-end
-
-local function handleMapInput(controllerIndex, cells, targets)
-    local directionX, directionY = getNavigationDirection(controllerIndex)
-    local now = Isaac.GetTime()
-
-    if directionX == 0 and directionY == 0 then
-        heldDirectionX = 0
-        heldDirectionY = 0
-        nextDirectionTime = 0
-    elseif directionX ~= heldDirectionX or directionY ~= heldDirectionY then
-        moveMapSelection(cells, directionX, directionY)
-        heldDirectionX = directionX
-        heldDirectionY = directionY
-        nextDirectionTime = now + DIRECTION_REPEAT_DELAY
-    elseif now >= nextDirectionTime then
-        moveMapSelection(cells, directionX, directionY)
-        nextDirectionTime = now + DIRECTION_REPEAT_INTERVAL
-    end
-
-    if Input.IsActionTriggered(ButtonAction.ACTION_MENUCONFIRM, controllerIndex) then
-        local target = findTeleportTarget(targets, selectedRoomIndex)
-        if target ~= nil then
-            pendingRoomIndex = target.index
+    for row, entry in ipairs(entries) do
+        if entry.name == highlightedEntry.name and entry.listIndex == highlightedEntry.listIndex
+            and entry.roomIndex == highlightedEntry.roomIndex then
+            return row
         end
     end
 end
 
-local function onUpdate()
-    local targetRoomIndex = pendingRoomIndex
-    pendingRoomIndex = nil
-    if targetRoomIndex == nil then
-        return
+local function getDirection(controller)
+    local direction = Input.GetActionValue(ButtonAction.ACTION_DOWN, controller)
+        - Input.GetActionValue(ButtonAction.ACTION_UP, controller)
+    if controller == 0 then
+        local up = Input.IsButtonPressed(Keyboard.KEY_UP, 0)
+        local down = Input.IsButtonPressed(Keyboard.KEY_DOWN, 0)
+        if up ~= down then
+            return down and 1 or -1
+        end
+    end
+    if math.abs(direction) >= 0.5 then
+        return direction > 0 and 1 or -1
+    end
+    return 0
+end
+
+local function selectEntry(controller, count, now)
+    local direction = getDirection(controller)
+    local step = 0
+
+    if direction == 0 then
+        heldDirection = 0
+        if controller ~= 0 then
+            local up = Input.IsActionTriggered(ButtonAction.ACTION_MENUUP, controller)
+            local down = Input.IsActionTriggered(ButtonAction.ACTION_MENUDOWN, controller)
+            if up ~= down then
+                step = down and 1 or -1
+            end
+        end
+    elseif direction ~= heldDirection then
+        step = direction
+        heldDirection, nextRepeatTime = direction, now + REPEAT_DELAY
+    elseif now >= nextRepeatTime then
+        step = direction
+        nextRepeatTime = now + REPEAT_INTERVAL
     end
 
-    local game = Game()
-    local level = game:GetLevel()
-    if game:GetNumPlayers() == 0 or game:IsPaused() or not isOnMainMap(level) then
-        return
-    end
+    selection = (selection - 1 + step) % count + 1
+end
 
-    local targetRoom = level:GetRoomByIdx(targetRoomIndex)
-    if targetRoom.Data == nil then
-        return
+local function drawLabel(name, y, selected, suffix)
+    local label = name[fontLoaded and 1 or 2] .. (suffix or "")
+    if selected then
+        label = "> " .. label
     end
-
-    local target = {
-        index = targetRoomIndex,
-        visitedCount = targetRoom.VisitedCount,
-        clear = targetRoom.Clear,
-    }
-    local roomCleared = game:GetRoom():IsClear()
-    local currentGridIndex = level:GetCurrentRoomDesc().SafeGridIndex
-    if not canTeleportToRoom(roomCleared, currentGridIndex, target) then
-        return
+    local red, green, blue = 1, 1, 1
+    if selected then
+        red, green, blue = 1, 0.82, 0.32
     end
-
-    level.LeaveDoor = -1
-    game:ChangeRoom(targetRoomIndex)
+    if fontLoaded then
+        menuFont:DrawStringUTF8(label, MENU_X, y, KColor(red, green, blue, 1), 0, false)
+    else
+        Isaac.RenderText(label, MENU_X, y, red, green, blue, 1)
+    end
 end
 
 local function onRender()
-    local leftDown = Input.IsMouseBtnPressed(Mouse.MOUSE_BUTTON_LEFT)
-    local justClicked = leftDown and not leftWasDown
-    leftWasDown = leftDown
-
     local game = Game()
     if game:GetNumPlayers() == 0 or game:IsPaused() then
-        resetMapSelection()
-        pendingRoomIndex = nil
+        pendingChoice = nil
+        waitForRelease = false
+        resetMenu()
         return
+    end
+    local controller = getMenuController()
+    local now = Isaac.GetTime()
+    if controller == nil then
+        waitForRelease = false
+        resetMenu()
+    end
+    if controller == nil or waitForRelease then
+        if notice and now < noticeUntil then
+            drawLabel(notice, MENU_Y, false)
+        end
+        return
+    end
+    if menuController ~= controller then
+        resetMenu()
+        menuController = controller
     end
 
     local level = game:GetLevel()
-    if not isOnMainMap(level) then
-        resetMapSelection()
-        pendingRoomIndex = nil
+    local current = getCurrentMainRoom(level)
+    local reason = getBlockReason(game, level, current)
+    drawLabel(text.title, MENU_Y, false)
+    if reason then
+        drawLabel(reason, MENU_Y + rowHeight, false)
+        resetMenu()
         return
     end
 
-    if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
-        local rooms = readFloorRooms(level)
-        local cells = buildMapCells(rooms, MAP_ORIGIN_X, MAP_ORIGIN_Y, MAP_CELL_SIZE)
-        local roomCleared = game:GetRoom():IsClear()
-        local currentGridIndex = level:GetCurrentRoomDesc().SafeGridIndex
-        local targets = getTeleportTargets(roomCleared, currentGridIndex, rooms)
+    local floorSeed = level:GetDungeonPlacementSeed()
+    local entries = buildEntries(level, current, floorSeed)
+    local displayedRow = findHighlightedRow(entries)
+    selection = displayedRow or math.min(selection, #entries)
 
-        for _, cell in ipairs(cells) do
-            Isaac.DebugString(string.format(
-                "[MyGoodTrip] room %d at (%d, %d)", cell.index, cell.x, cell.y
-            ))
-        end
-
-        Isaac.DebugString("[MyGoodTrip] targets = " .. #targets)
-        for _, room in ipairs(targets) do
-            Isaac.DebugString("[MyGoodTrip] target room = " .. room.index)
-        end
-
-        pendingRoomIndex = level:GetStartingRoomIndex()
+    local confirmed = Input.IsActionTriggered(ButtonAction.ACTION_MENUCONFIRM, controller)
+        or (controller == 0 and Input.IsButtonTriggered(Keyboard.KEY_ENTER, 0))
+    if displayedRow and confirmed and not pendingChoice then
+        pendingChoice = {entry = entries[displayedRow], floorSeed = floorSeed, originListIndex = current.ListIndex}
+        waitForRelease = true
+    else
+        selectEntry(controller, #entries, now)
     end
+    highlightedEntry = entries[selection]
+    local firstRow = math.max(1, selection - MENU_ROWS + 1)
+    local lastRow = math.min(#entries, firstRow + MENU_ROWS - 1)
+    for row = firstRow, lastRow do
+        local entry = entries[row]
+        drawLabel(entry.name, MENU_Y + (row - firstRow + 1) * rowHeight, row == selection, entry.suffix)
+    end
+    drawLabel(text.help, MENU_Y + (lastRow - firstRow + 2) * rowHeight, false)
+end
 
-    local controllerIndex = getMapControllerIndex()
-    if controllerIndex == nil then
-        resetMapSelection()
+local function onUpdate()
+    local choice = pendingChoice
+    pendingChoice = nil
+    if not choice then
+        return
+    end
+    local game = Game()
+    if game:GetNumPlayers() == 0 or game:IsPaused() then
+        return
+    end
+    local level = game:GetLevel()
+    local current = getCurrentMainRoom(level)
+    if not current or current.ListIndex ~= choice.originListIndex or level:GetDungeonPlacementSeed() ~= choice.floorSeed then
+        return
+    end
+    local reason = getBlockReason(game, level, current)
+    if reason then
+        showNotice(reason)
         return
     end
 
-    local rooms = readFloorRooms(level)
-    local cells = buildMapCells(rooms, MAP_ORIGIN_X, MAP_ORIGIN_Y, MAP_CELL_SIZE)
-    local currentGridIndex = level:GetCurrentRoomDesc().SafeGridIndex
-    local roomCleared = game:GetRoom():IsClear()
-    local targets = getTeleportTargets(roomCleared, currentGridIndex, rooms)
-
-    if mapControllerIndex ~= controllerIndex then
-        resetMapSelection()
-        mapControllerIndex = controllerIndex
-        selectedRoomIndex = currentGridIndex
+    local entry = choice.entry
+    if entry.markAnchor then
+        anchor = {roomIndex = current.SafeGridIndex, listIndex = current.ListIndex, floorSeed = choice.floorSeed}
+        showNotice(text.anchorSet)
+        return
     end
-
-    if roomCleared then
-        handleMapInput(controllerIndex, cells, targets)
-        if justClicked then
-            handleMapClick(cells, targets)
-        end
-    else
-        selectedRoomIndex = currentGridIndex
-        heldDirectionX = 0
-        heldDirectionY = 0
-        nextDirectionTime = 0
+    local target = getEligibleTarget(level, entry.roomIndex, entry.listIndex)
+    if not target or target.ListIndex == current.ListIndex then
+        showNotice(text.invalidTarget)
+        return
     end
-
-    for _, cell in ipairs(cells) do
-        local marker = "+"
-        local red, green, blue = 0.5, 0.5, 0.5
-        if cell.clear then
-            red, green, blue = 0.4, 1, 0.4
-        end
-        if cell.index == currentGridIndex then
-            marker = "@"
-            red, green, blue = 1, 1, 1
-        end
-        if cell.index == selectedRoomIndex then
-            marker = ">"
-            red, green, blue = 1, 0.8, 0.2
-        end
-
-        Isaac.RenderText(marker, cell.x + 2, cell.y, red, green, blue, 1)
-    end
-
-    local hintY = MAP_ORIGIN_Y + ROOM_GRID_WIDTH * MAP_CELL_SIZE + 6
-    if roomCleared then
-        Isaac.RenderText("Move: select | Enter/A: teleport", MAP_ORIGIN_X, hintY, 1, 1, 1, 1)
-        Isaac.RenderText("Click: teleport | Release map: close", MAP_ORIGIN_X, hintY + 12, 1, 1, 1, 1)
-    else
-        Isaac.RenderText("Clear this room before teleporting.", MAP_ORIGIN_X, hintY, 1, 0.5, 0.5, 1)
-    end
+    teleport(game, level, current, target, choice.floorSeed)
 end
 
 local function onInputAction(_, entity, inputHook, buttonAction)
-    if entity == nil or not blockedMapActions[buttonAction] then
+    if not entity or not blockedActions[buttonAction] then
         return
     end
-
     local player = entity:ToPlayer()
     local game = Game()
-    if player == nil or game:GetNumPlayers() == 0 or game:IsPaused() then
+    if not player or game:GetNumPlayers() == 0 or game:IsPaused()
+        or player.ControllerIndex ~= Isaac.GetPlayer(0).ControllerIndex or getMenuController() == nil then
         return
     end
-
-    if player.ControllerIndex ~= Isaac.GetPlayer(0).ControllerIndex then
+    local level = game:GetLevel()
+    if getBlockReason(game, level, getCurrentMainRoom(level)) then
         return
     end
-
-    if getMapControllerIndex() == nil or not game:GetRoom():IsClear()
-        or not isOnMainMap(game:GetLevel()) then
-        return
-    end
-
     if inputHook == InputHook.GET_ACTION_VALUE then
         return 0
     end
-
     return false
 end
 
-local function resetInputState()
-    resetMapSelection()
-    pendingRoomIndex = nil
-    leftWasDown = Input.IsMouseBtnPressed(Mouse.MOUSE_BUTTON_LEFT)
+local function onNewRoom()
+    pendingChoice = nil
+    resetMenu()
 end
 
-mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
+local function onNewFloor()
+    anchor, notice = nil, nil
+    waitForRelease = false
+    onNewRoom()
+end
+
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
+mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, onInputAction)
-mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, resetInputState)
-mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, resetInputState)
-mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, resetInputState)
+mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoom)
+mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloor)
+mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onNewFloor)
+mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, onNewFloor)

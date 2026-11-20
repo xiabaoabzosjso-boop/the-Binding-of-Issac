@@ -4,6 +4,16 @@ local json = require("json")
 
 local COUNTER_DISTANCE = 50
 local FEEDBACK_FRAMES = 60
+local PAD_PRESS_THRESHOLD = 0.60
+local PAD_RELEASE_THRESHOLD = 0.35
+local PAD_DIRECTION_MARGIN = 0.15
+
+local shootActions = {
+    [ButtonAction.ACTION_SHOOTLEFT] = true,
+    [ButtonAction.ACTION_SHOOTRIGHT] = true,
+    [ButtonAction.ACTION_SHOOTUP] = true,
+    [ButtonAction.ACTION_SHOOTDOWN] = true,
+}
 
 local ledger = { runReady = false }
 local counter = { itemId = rules.HANGER_ID }
@@ -284,20 +294,89 @@ local function refreshCounterOffer(player, cycle)
     counter.offer = rules.getCounterOffer(state, counter.itemId)
 end
 
+local function isPadMapHeld(player)
+    local index = player.ControllerIndex
+    return index > 0 and Input.IsActionPressed(ButtonAction.ACTION_MAP, index)
+end
+
+local function readPadCommand(player)
+    if not isPadMapHeld(player) then
+        counter.padArmed = false
+        return
+    end
+
+    local index = player.ControllerIndex
+    local x = Input.GetActionValue(ButtonAction.ACTION_SHOOTRIGHT, index)
+        - Input.GetActionValue(ButtonAction.ACTION_SHOOTLEFT, index)
+    local y = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN, index)
+        - Input.GetActionValue(ButtonAction.ACTION_SHOOTUP, index)
+    local horizontal = math.abs(x)
+    local vertical = math.abs(y)
+
+    if horizontal <= PAD_RELEASE_THRESHOLD and vertical <= PAD_RELEASE_THRESHOLD then
+        counter.padArmed = true
+        return
+    end
+
+    if not counter.padArmed then
+        return
+    end
+
+    local command
+    if vertical >= PAD_PRESS_THRESHOLD and vertical > horizontal + PAD_DIRECTION_MARGIN then
+        command = y < 0 and "confirm" or "cancel"
+    elseif x >= PAD_PRESS_THRESHOLD and horizontal > vertical + PAD_DIRECTION_MARGIN then
+        command = "next"
+    end
+
+    if command ~= nil then
+        counter.padArmed = false
+    end
+
+    return command
+end
+
+local function onCounterInput(_, entity, hook, action)
+    if not shootActions[action] or entity == nil then
+        return
+    end
+
+    local offer = ledger.pendingOffer or counter.offer
+    if offer == nil or not offer.canConfirm then
+        return
+    end
+
+    local player = getNearbyPlayer()
+    if player == nil or GetPtrHash(player) ~= GetPtrHash(entity)
+        or not isPadMapHeld(player) or Game():IsPaused()
+    then
+        return
+    end
+
+    if hook == InputHook.GET_ACTION_VALUE then
+        return 0
+    end
+
+    return false
+end
+
 local function updateShopCounter()
     if Game():IsPaused() then
+        counter.padArmed = false
         return
     end
 
     local player = getNearbyPlayer()
     if player == nil then
+        counter.padArmed = false
         rules.cancelCounterOffer(ledger)
         counter.offer = nil
         counter.feedback = nil
         return
     end
 
-    if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+    local padCommand = readPadCommand(player)
+    if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) or padCommand == "cancel" then
         rules.cancelCounterOffer(ledger)
         counter.feedback = nil
         refreshCounterOffer(player, false)
@@ -305,6 +384,7 @@ local function updateShopCounter()
     end
 
     local pressedConfirm = Input.IsButtonTriggered(Keyboard.KEY_F7, 0)
+        or padCommand == "confirm"
     local pendingOffer = ledger.pendingOffer
 
     if pendingOffer ~= nil then
@@ -321,7 +401,7 @@ local function updateShopCounter()
         return
     end
 
-    local cycle = Input.IsButtonTriggered(Keyboard.KEY_F9, 0)
+    local cycle = Input.IsButtonTriggered(Keyboard.KEY_F9, 0) or padCommand == "next"
     refreshCounterOffer(player, cycle)
     if pressedConfirm and counter.offer.canConfirm then
         ledger.pendingOffer = counter.offer
@@ -372,6 +452,10 @@ local function renderShopCounter()
         return
     end
 
+    if Game():IsPaused() then
+        counter.padArmed = false
+    end
+
     local label = "PAWNSHOP"
     local position = Isaac.WorldToScreen(counter.position)
     local labelX = position.X - Isaac.GetTextWidth(label) / 2
@@ -382,17 +466,26 @@ local function renderShopCounter()
         return
     end
 
-    local y = Isaac.GetScreenHeight() - 58
+    local y = Isaac.GetScreenHeight() - 70
     Isaac.RenderText(getCounterText(offer), 18, y, 1, 1, 1, 1)
 
+    local keyboardHint
+    local padHint
     if ledger.pendingOffer ~= nil then
-        Isaac.RenderText("F7 Confirm | F8 Cancel", 18, y + 13, 1, 0.92, 0.72, 1)
+        keyboardHint = "F7 Confirm | F8 Cancel"
+        padHint = "Hold Map: Aim Up Confirm | Aim Down Cancel"
     elseif offer.canConfirm then
-        local hint = "F7 Select offer"
+        keyboardHint = "F7 Select offer"
+        padHint = "Hold Map: Aim Up Select"
         if counter.choiceCount > 1 then
-            hint = "F9 Next item | " .. hint
+            keyboardHint = keyboardHint .. " | F9 Next item"
+            padHint = padHint .. " | Aim Right Next item"
         end
-        Isaac.RenderText(hint, 18, y + 13, 1, 1, 1, 1)
+    end
+
+    if keyboardHint ~= nil then
+        Isaac.RenderText(keyboardHint, 18, y + 13, 1, 0.92, 0.72, 1)
+        Isaac.RenderText(padHint, 18, y + 26, 1, 0.92, 0.72, 1)
     end
 
     local feedback = counter.feedback
@@ -431,6 +524,7 @@ mod:AddCallback(
     onHourglassUsed,
     CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS
 )
+mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, onCounterInput)
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, updateShopCounter)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, renderTicketHud)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, renderShopCounter)

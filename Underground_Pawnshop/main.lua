@@ -1,9 +1,10 @@
 local mod = RegisterMod("Underground Pawnshop", 1)
 local rules = include("pawnshop_rules")
+local ui = include("pawnshop_ui")
 local json = require("json")
 
 local COUNTER_DISTANCE = 50
-local FEEDBACK_FRAMES = 60
+local FEEDBACK_FRAMES = 100
 local PAD_PRESS_THRESHOLD = 0.60
 local PAD_RELEASE_THRESHOLD = 0.35
 local PAD_DIRECTION_MARGIN = 0.15
@@ -19,12 +20,7 @@ local ledger = { runReady = false }
 local counter = { itemId = rules.HANGER_ID }
 local roomEntry
 local previousFloorEntry
-local rewindUntilFrame
-
-local commandKinds = {
-    pawn_hanger = "pawn",
-    redeem_hanger = "redeem",
-}
+local rewindPending = false
 
 local function getFloorId()
     return tostring(Game():GetLevel():GetDungeonPlacementSeed())
@@ -40,11 +36,26 @@ local function getRunPlayer()
     end
 
     local game = Game()
-    if game:GetNumPlayers() ~= 1 or game:IsGreedMode() then
+    if game:IsGreedMode() then
         return nil
     end
 
-    return Isaac.GetPlayer(0)
+    local primary
+    for index = 0, game:GetNumPlayers() - 1 do
+        local player = Isaac.GetPlayer(index)
+        if player.Parent == nil then
+            if primary ~= nil then
+                return nil
+            end
+            primary = player
+        end
+    end
+
+    if primary ~= nil and not primary:IsDead() then
+        return primary
+    end
+
+    return nil
 end
 
 local function readTradeState(player)
@@ -63,15 +74,22 @@ local function readTradeState(player)
 end
 
 local function changeItemCount(player, itemId, amount)
+    if amount == 0 then
+        return
+    end
+
     if amount > 0 then
         for _ = 1, amount do
             player:AddCollectible(itemId, 0, false)
         end
     else
         for _ = 1, -amount do
-            player:RemoveCollectible(itemId, true)
+            player:RemoveCollectible(itemId, true, ActiveSlot.SLOT_PRIMARY, false)
         end
     end
+
+    player:AddCacheFlags(CacheFlag.CACHE_ALL)
+    player:EvaluateItems()
 end
 
 local function rollbackTrade(player, itemId, coins, count)
@@ -125,6 +143,7 @@ local function executeTrade(player, offer)
     ledger.ticket = draft.ticket
     ledger.usedThisFloor = draft.usedThisFloor
     rules.cancelCounterOffer(ledger)
+    SFXManager():Play(SoundEffect.SOUND_CASH_REGISTER, 0.55, 0, false, 1)
 
     local name = rules.ITEM_BY_ID[itemId].name
     if offer.kind == "pawn" then
@@ -156,7 +175,7 @@ local function onGameStarted(_, isContinued)
     rules.startRun(ledger, saved, runId, floorId, isContinued)
     roomEntry = nil
     previousFloorEntry = nil
-    rewindUntilFrame = nil
+    rewindPending = false
 
     if not isContinued then
         roomEntry = snapshotLedger()
@@ -207,7 +226,7 @@ end
 
 local function onHourglassUsed()
     if ledger.runReady then
-        rewindUntilFrame = Game():GetFrameCount() + 2
+        rewindPending = true
     end
 end
 
@@ -218,10 +237,9 @@ local function syncRoomLedger()
 
     local floorId = getFloorId()
     local runId = ledger.runId
-    local deadline = rewindUntilFrame
-    rewindUntilFrame = nil
 
-    if deadline ~= nil and Game():GetFrameCount() <= deadline then
+    if rewindPending then
+        rewindPending = false
         local entry = roomEntry
         if not rules.matchesSave(entry, runId, floorId) then
             entry = previousFloorEntry
@@ -254,7 +272,7 @@ local function onShopRoomEntered()
 end
 
 local function getNearbyPlayer()
-    if counter.position == nil then
+    if counter.position == nil or not Game():GetRoom():IsClear() then
         return nil
     end
 
@@ -266,7 +284,7 @@ local function getNearbyPlayer()
     return nil
 end
 
-local function refreshCounterOffer(player, cycle)
+local function refreshCounterOffer(player, direction)
     local state = readTradeState(player)
     local choices = {}
     local selectedIndex
@@ -283,15 +301,19 @@ local function refreshCounterOffer(player, cycle)
     end
 
     counter.choiceCount = #choices
+    counter.choiceIndex = nil
     if #choices > 0 then
         local index = selectedIndex or 1
-        if cycle and selectedIndex ~= nil then
-            index = index % #choices + 1
+        if direction ~= 0 and selectedIndex ~= nil then
+            index = (index - 1 + direction) % #choices + 1
         end
         counter.itemId = choices[index]
+        counter.choiceIndex = index
     end
 
     counter.offer = rules.getCounterOffer(state, counter.itemId)
+    counter.ownedCount = state.itemCounts[counter.offer.itemId]
+    counter.coins = state.coins
 end
 
 local function isPadMapHeld(player)
@@ -325,8 +347,8 @@ local function readPadCommand(player)
     local command
     if vertical >= PAD_PRESS_THRESHOLD and vertical > horizontal + PAD_DIRECTION_MARGIN then
         command = y < 0 and "confirm" or "cancel"
-    elseif x >= PAD_PRESS_THRESHOLD and horizontal > vertical + PAD_DIRECTION_MARGIN then
-        command = "next"
+    elseif horizontal >= PAD_PRESS_THRESHOLD and horizontal > vertical + PAD_DIRECTION_MARGIN then
+        command = x > 0 and "next" or "previous"
     end
 
     if command ~= nil then
@@ -379,7 +401,7 @@ local function updateShopCounter()
     if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) or padCommand == "cancel" then
         rules.cancelCounterOffer(ledger)
         counter.feedback = nil
-        refreshCounterOffer(player, false)
+        refreshCounterOffer(player, 0)
         return
     end
 
@@ -388,6 +410,11 @@ local function updateShopCounter()
     local pendingOffer = ledger.pendingOffer
 
     if pendingOffer ~= nil then
+        counter.coins = player:GetNumCoins()
+        if pendingOffer.kind == "pawn" then
+            counter.ownedCount = player:GetCollectibleNum(pendingOffer.itemId, true)
+        end
+
         if pressedConfirm then
             rules.cancelCounterOffer(ledger)
             local result = executeTrade(player, pendingOffer)
@@ -396,59 +423,30 @@ local function updateShopCounter()
                 hideAtFrame = Game():GetFrameCount() + FEEDBACK_FRAMES,
             }
             print("[Pawnshop] " .. result)
-            refreshCounterOffer(player, false)
+            refreshCounterOffer(player, 0)
         end
         return
     end
 
-    local cycle = Input.IsButtonTriggered(Keyboard.KEY_F9, 0) or padCommand == "next"
-    refreshCounterOffer(player, cycle)
+    local direction = 0
+    if not pressedConfirm then
+        if Input.IsButtonTriggered(Keyboard.KEY_F9, 0) or padCommand == "next" then
+            direction = 1
+        elseif Input.IsButtonTriggered(Keyboard.KEY_F6, 0) or padCommand == "previous" then
+            direction = -1
+        end
+    end
+
+    refreshCounterOffer(player, direction)
     if pressedConfirm and counter.offer.canConfirm then
         ledger.pendingOffer = counter.offer
         counter.feedback = nil
     end
 end
 
-local function getCounterText(offer)
-    if offer.kind == "pawn" then
-        local name = rules.ITEM_BY_ID[offer.itemId].name
-        return string.format(
-            "Pawn %s +%dc | Redeem %dc",
-            name,
-            offer.payout,
-            offer.redeemPrice
-        )
-    end
-
-    if offer.kind == "redeem" then
-        local name = rules.ITEM_BY_ID[offer.itemId].name
-        local text = string.format("Redeem %s %dc", name, offer.redeemPrice)
-        if not offer.canConfirm then
-            text = text .. " | Not enough coins"
-        end
-        return text
-    end
-
-    if offer.kind == "used" then
-        return "Pawnshop already used this floor"
-    end
-
-    return "No eligible item"
-end
-
-local function renderTicketHud()
-    local ticket = ledger.ticket
-    if ticket == nil or ticket.floorId ~= ledger.floorId or getRunPlayer() == nil then
-        return
-    end
-
-    local name = rules.ITEM_BY_ID[ticket.itemId].name
-    local text = string.format("%s | Redeem %dc | This floor only", name, ticket.redeemPrice)
-    Isaac.RenderText(text, 18, Isaac.GetScreenHeight() - 24, 1, 0.92, 0.72, 1)
-end
-
-local function renderShopCounter()
-    if counter.position == nil or getRunPlayer() == nil then
+local function renderPawnshop()
+    local player = getRunPlayer()
+    if player == nil then
         return
     end
 
@@ -456,63 +454,18 @@ local function renderShopCounter()
         counter.padArmed = false
     end
 
-    local label = "PAWNSHOP"
-    local position = Isaac.WorldToScreen(counter.position)
-    local labelX = position.X - Isaac.GetTextWidth(label) / 2
-    Isaac.RenderText(label, labelX, position.Y - 10, 1, 0.92, 0.72, 1)
-
-    local offer = ledger.pendingOffer or counter.offer
-    if offer == nil then
-        return
+    local ticket = ledger.ticket
+    if ticket ~= nil and ticket.floorId == ledger.floorId then
+        ui.renderTicket(ticket)
     end
 
-    local y = Isaac.GetScreenHeight() - 70
-    Isaac.RenderText(getCounterText(offer), 18, y, 1, 1, 1, 1)
-
-    local keyboardHint
-    local padHint
-    if ledger.pendingOffer ~= nil then
-        keyboardHint = "F7 Confirm | F8 Cancel"
-        padHint = "Hold Map: Aim Up Confirm | Aim Down Cancel"
-    elseif offer.canConfirm then
-        keyboardHint = "F7 Select offer"
-        padHint = "Hold Map: Aim Up Select"
-        if counter.choiceCount > 1 then
-            keyboardHint = keyboardHint .. " | F9 Next item"
-            padHint = padHint .. " | Aim Right Next item"
-        end
+    if counter.position ~= nil then
+        ui.renderSign(counter.position)
     end
 
-    if keyboardHint ~= nil then
-        Isaac.RenderText(keyboardHint, 18, y + 13, 1, 0.92, 0.72, 1)
-        Isaac.RenderText(padHint, 18, y + 26, 1, 0.92, 0.72, 1)
+    if counter.offer ~= nil and getNearbyPlayer() ~= nil then
+        ui.renderCounter(counter, ledger.pendingOffer, rules.getFocus(ledger.floorId), Game():GetFrameCount())
     end
-
-    local feedback = counter.feedback
-    if feedback ~= nil and Game():GetFrameCount() < feedback.hideAtFrame then
-        Isaac.RenderText(feedback.text, 18, y - 13, 1, 0.92, 0.72, 1)
-    end
-end
-
-local function onCommand(_, command)
-    local expectedKind = commandKinds[command]
-    if expectedKind == nil then
-        return
-    end
-
-    local player = getRunPlayer()
-    if player == nil then
-        print("[Pawnshop] Start a single-player normal run first.")
-        return
-    end
-
-    local offer = rules.getCounterOffer(readTradeState(player), rules.HANGER_ID)
-    if offer.kind ~= expectedKind or offer.itemId ~= rules.HANGER_ID then
-        print("[Pawnshop] No matching Wire Coat Hanger offer.")
-        return
-    end
-
-    print("[Pawnshop] " .. executeTrade(player, offer))
 end
 
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStarted)
@@ -526,6 +479,4 @@ mod:AddCallback(
 )
 mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, onCounterInput)
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, updateShopCounter)
-mod:AddCallback(ModCallbacks.MC_POST_RENDER, renderTicketHud)
-mod:AddCallback(ModCallbacks.MC_POST_RENDER, renderShopCounter)
-mod:AddCallback(ModCallbacks.MC_EXECUTE_CMD, onCommand)
+mod:AddCallback(ModCallbacks.MC_POST_RENDER, renderPawnshop)

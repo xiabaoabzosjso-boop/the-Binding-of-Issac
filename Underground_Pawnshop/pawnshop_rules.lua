@@ -1,15 +1,35 @@
 local rules = {}
 
 rules.HANGER_ID = 32
+rules.FEATURE_BONUS = 2
 rules.ITEMS = {
-    { id = rules.HANGER_ID, name = "Wire Coat Hanger", payout = 8, redeemPrice = 10 },
-    { id = 27, name = "Wooden Spoon", payout = 5, redeemPrice = 7 },
-    { id = 50, name = "Steven", payout = 9, redeemPrice = 11 },
+    { id = rules.HANGER_ID, name = "Wire Coat Hanger", category = "Tears", payout = 8, redeemPrice = 10 },
+    { id = 1, name = "The Sad Onion", category = "Tears", payout = 7, redeemPrice = 9 },
+    { id = 183, name = "Tooth Picks", category = "Tears", payout = 8, redeemPrice = 10 },
+    { id = 341, name = "Torn Photo", category = "Tears", payout = 8, redeemPrice = 10 },
+    { id = 27, name = "Wooden Spoon", category = "Speed", payout = 5, redeemPrice = 7 },
+    { id = 28, name = "The Belt", category = "Speed", payout = 4, redeemPrice = 6 },
+    { id = 143, name = "Speed Ball", category = "Speed", payout = 6, redeemPrice = 8 },
+    { id = 14, name = "Roid Rage", category = "Speed", payout = 6, redeemPrice = 8 },
+    { id = 50, name = "Steven", category = "Damage", payout = 9, redeemPrice = 11 },
+    { id = 70, name = "Growth Hormones", category = "Damage", payout = 9, redeemPrice = 11 },
+    { id = 345, name = "Synthoil", category = "Damage", payout = 10, redeemPrice = 12 },
+    { id = 165, name = "Cat-o-nine-tails", category = "Damage", payout = 8, redeemPrice = 10 },
+    { id = 254, name = "Blood Clot", category = "Damage", payout = 6, redeemPrice = 8 },
 }
 
 rules.ITEM_BY_ID = {}
 for _, item in ipairs(rules.ITEMS) do
     rules.ITEM_BY_ID[item.id] = item
+end
+
+local categories = { "Tears", "Speed", "Damage" }
+
+function rules.getFocus(floorId)
+    local seed = tonumber(floorId)
+    if seed ~= nil then
+        return categories[seed % #categories + 1]
+    end
 end
 
 local function copyTicket(ticket)
@@ -33,22 +53,13 @@ local function isValidTicket(state, ticket)
         and ticket.redeemPrice % 1 == 0
 end
 
-local function pawnItem(state, itemId)
-    local item = rules.ITEM_BY_ID[itemId]
-    if item == nil or state.usedThisFloor or state.ticket ~= nil then
-        return false
-    end
-
-    local count = state.itemCounts[itemId] or 0
-    if count < 1 then
-        return false
-    end
-
-    state.itemCounts[itemId] = count - 1
-    state.coins = state.coins + item.payout
+local function pawnItem(state, offer)
+    local itemId = offer.itemId
+    state.itemCounts[itemId] = state.itemCounts[itemId] - 1
+    state.coins = state.coins + offer.payout
     state.ticket = {
         itemId = itemId,
-        redeemPrice = item.redeemPrice,
+        redeemPrice = offer.redeemPrice,
         floorId = state.floorId,
     }
     state.usedThisFloor = true
@@ -56,7 +67,8 @@ local function pawnItem(state, itemId)
 end
 
 function rules.pawnHanger(state)
-    return pawnItem(state, rules.HANGER_ID)
+    local offer = rules.getCounterOffer(state, rules.HANGER_ID)
+    return offer.kind == "pawn" and rules.confirmCounterOffer(state, offer)
 end
 
 function rules.redeemHanger(state)
@@ -91,12 +103,14 @@ function rules.getCounterOffer(state, itemId)
 
     local item = rules.ITEM_BY_ID[itemId]
     if item ~= nil and (state.itemCounts[itemId] or 0) >= 1 then
+        local bonus = item.category == rules.getFocus(state.floorId) and rules.FEATURE_BONUS or 0
         return {
             kind = "pawn",
             itemId = itemId,
             floorId = state.floorId,
-            payout = item.payout,
-            redeemPrice = item.redeemPrice,
+            payout = item.payout + bonus,
+            redeemPrice = item.redeemPrice + bonus,
+            bonus = bonus,
             canConfirm = true,
         }
     end
@@ -120,7 +134,7 @@ function rules.confirmCounterOffer(state, offer)
     end
 
     if current.kind == "pawn" then
-        return pawnItem(state, current.itemId)
+        return pawnItem(state, current)
     end
 
     return rules.redeemHanger(state)

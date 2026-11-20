@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <name>Underground Pawnshop</name>
+    <directory>Underground_Pawnshop</directory>
+    <description><![CDATA[[h1]Underground Pawnshop | 地下当铺[/h1]
+Short on coins for a shop item? Pledge one of your passive items at the pawnshop counter. Its stat bonus goes with it. Pay the price printed on your ticket to reclaim it before you leave the floor.
+
+[h2]How to trade[/h2]
+Find PAWNSHOP in a cleared regular shop. Review the offer, then confirm to make the trade. You can pledge one item per floor. A featured category pays 2c extra and costs 2c extra to reclaim.
+
+[list]
+[*][b]Keyboard[/b] F6/F9 browse, F7 review and confirm, F8 cancel.
+[*][b]Controller[/b] Hold your Map button and use the right stick. Left/right browse, up reviews and confirms, down cancels. Center the stick between gestures.
+[/list]
+
+[h2]Accepted items[/h2]
+[b]Tears[/b] Wire Coat Hanger, The Sad Onion, Tooth Picks, Torn Photo.
+[b]Speed[/b] Wooden Spoon, The Belt, Speed Ball, Roid Rage.
+[b]Damage[/b] Steven, Growth Hormones, Synthoil, Cat-o-nine-tails, Blood Clot.
+
+[h2]中文玩法[/h2]
+清场后的普通商店会出现 PAWNSHOP。抵押一件道具可以立即拿到硬币，并暂时失去这件道具的属性加成。每层只能抵押一次，在离层前可以按当票上的价格赎回。每层有一个加价类别，符合类别的道具抵押和赎回都加 2¢。
+键盘用 F6/F9 切换，F7 查看并确认，F8 取消。手柄按住地图键，右摇杆左右切换、上推查看或确认、下推取消。两次操作之间让摇杆回中。
+
+[b]Requirements[/b] The Binding of Isaac: Repentance. Standard single-player runs with one playable character.]]></description>
+    <version>1.0</version>
+    <visibility>Private</visibility>
+    <tag id="Lua"/>
+</metadata>

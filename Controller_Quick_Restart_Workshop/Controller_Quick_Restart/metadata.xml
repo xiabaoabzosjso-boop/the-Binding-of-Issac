@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <name>手柄的“R键”</name>
+    <directory>Controller_Quick_Restart</directory>
+    <description><![CDATA[用手柄快速重开！在单人局中，把 Xbox 手柄的[b]右摇杆（RS）向下按住 1.25 秒[/b]。进度到满后，用当前角色直接开新一局。
+
+[list]
+[*]屏幕下方会显示长按进度。提前松开或暂停可取消。
+[*]每次长按只重开一次。进入新局后，松开再按即可再次重开。
+[*]适用于 PC 版 Repentance 和 Repentance+，无需额外模组。伊甸和里伊甸请使用游戏自带的重开操作，以沿用原版的伊甸币规则。
+[/list]
+
+[h2]Controller Quick Restart[/h2]
+In a solo run, [b]click and hold the Xbox right stick (RS) for 1.25 seconds[/b] to start a fresh run with the current character.
+
+[list]
+[*]Watch the on-screen progress. Release the stick or pause to cancel.
+[*]Holding through the transition only restarts once. Release and hold again for another restart.
+[*]For PC Repentance and Repentance+. No mod dependencies. Use the game's built-in restart for Eden and Tainted Eden to preserve the normal token rules.
+[/list]]]></description>
+    <version>1.0</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Tweaks"/>
+</metadata>

@@ -1628,3 +1628,71 @@ button {
     text-align: center;
   }
 }
+
+.q4-portrait {
+  display: inline-block;
+  flex: none;
+  width: var(--portrait-size);
+  height: var(--portrait-size);
+  background: url("../art/collectible-icons.webp") var(--portrait-x) var(--portrait-y) / 600% 400% no-repeat;
+  vertical-align: middle;
+}
+
+.stone-niche-cell.q4-featured-card {
+  border-color: #a97942;
+  box-shadow: inset 0 1px 0 rgb(239 213 156 / 18%), inset 0 -3px 0 #52341e, 3px 3px 0 #0c0806;
+}
+
+.stone-niche-cell.q4-featured-card:hover,
+.stone-niche-cell.q4-featured-card:focus-within {
+  border-color: #e4bb72;
+}
+
+.exact-status-card.q4-featured-card {
+  border-color: #a97942;
+}
+
+.q4-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.icon-stage-btn.q4-stage,
+.modal-stage-box.q4-stage,
+.size-box-32.q4-stage,
+.size-box-48.q4-stage {
+  background: radial-gradient(ellipse at 42% 34%, #fbefce 0%, #e8c996 68%, #b88950 100%);
+  border-color: #ad783f;
+  box-shadow: inset 0 0 0 1px #f6dea8, inset 0 0 0 3px rgb(107 63 29 / 28%);
+}
+
+.icon-stage-btn.q4-stage {
+  width: 64px;
+  height: 64px;
+  padding: 2px;
+}
+
+.q4-stage::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(112deg, transparent 31%, rgb(255 250 222 / 65%) 49%, transparent 66%);
+  opacity: 0;
+  transform: translateX(-105%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .q4-featured-card:hover .q4-stage::after,
+  .q4-stage:hover::after,
+  .q4-stage:focus-visible::after {
+    animation: q4-foil-sweep 0.65s ease-out;
+  }
+}
+
+@keyframes q4-foil-sweep {
+  0% { transform: translateX(-105%); opacity: 0; }
+  24%, 62% { opacity: 0.82; }
+  100% { transform: translateX(105%); opacity: 0; }
+}

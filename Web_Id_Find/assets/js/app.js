@@ -679,6 +679,7 @@
     if (statusInfo.item) {
       const item = statusInfo.item;
       const hasVanillaId = statusInfo.status === "collected";
+      const hasQ4Portrait = window.ISAAC_ICONS.hasQ4Portrait(item);
       const qMeta = QUALITY_META[item.quality] || QUALITY_META[0];
       const inBuild = state.buildIds.includes(item.id);
       const filterNotes = [];
@@ -693,11 +694,11 @@
       }
 
       box.innerHTML = `
-        <div class="exact-status-card">
+        <div class="exact-status-card${hasQ4Portrait ? " q4-featured-card" : ""}">
           <div class="exact-status-top">
             <div class="exact-item-main">
-              <button type="button" class="icon-stage-btn ${window.ISAAC_ICONS.MINIMAL_SMALL_ICONS[item.id] ? "has-minimal" : ""}" data-open-modal="${item.id}" aria-label="打开 #${item.id} ${escapeHtml(item.nameZh)} 详情">
-                ${window.ISAAC_ICONS.getItemIcon(item, 44)}
+              <button type="button" class="icon-stage-btn ${hasQ4Portrait ? "q4-stage" : window.ISAAC_ICONS.MINIMAL_SMALL_ICONS[item.id] ? "has-minimal" : ""}" data-open-modal="${item.id}" aria-label="打开 #${item.id} ${escapeHtml(item.nameZh)} 详情">
+                ${window.ISAAC_ICONS.getItemIcon(item, hasQ4Portrait ? 56 : 44)}
               </button>
               <div style="min-width: 0;">
                 <div class="card-id-group">
@@ -820,6 +821,7 @@
   }
 
   function renderCompactCard(item) {
+    const hasQ4Portrait = window.ISAAC_ICONS.hasQ4Portrait(item);
     const qMeta = QUALITY_META[item.quality] || QUALITY_META[0];
     const inBuild = state.buildIds.includes(item.id);
     const nicheBg = getNicheBgClass(item);
@@ -838,7 +840,7 @@
       .join("");
 
     return `
-      <article class="stone-niche-cell ${nicheBg}" data-item-id="${item.id}">
+      <article class="stone-niche-cell ${nicheBg}${hasQ4Portrait ? " q4-featured-card" : ""}" data-item-id="${item.id}">
         <div>
           <div class="card-meta-row">
             <div class="card-id-group">
@@ -851,11 +853,11 @@
           <div class="card-body-row">
             <button
               type="button"
-              class="icon-stage-btn ${window.ISAAC_ICONS.MINIMAL_SMALL_ICONS[item.id] ? "has-minimal" : ""}"
+              class="icon-stage-btn ${hasQ4Portrait ? "q4-stage" : window.ISAAC_ICONS.MINIMAL_SMALL_ICONS[item.id] ? "has-minimal" : ""}"
               data-open-modal="${item.id}"
               aria-label="查看 #${item.id} ${escapeHtml(item.nameZh)} 详情"
             >
-              ${window.ISAAC_ICONS.getItemIcon(item, 44)}
+              ${window.ISAAC_ICONS.getItemIcon(item, hasQ4Portrait ? 56 : 44)}
             </button>
             <div class="card-title-col">
               <button type="button" class="card-title-btn" data-open-modal="${item.id}">
@@ -977,11 +979,11 @@
               </div>
               <div class="size-sample-group">
                 <div class="size-sample">
-                  <div class="size-box-32">${window.ISAAC_ICONS.getItemIcon(item, 28)}</div>
+                  <div class="size-box-32${window.ISAAC_ICONS.hasQ4Portrait(item) ? " q4-stage" : ""}">${window.ISAAC_ICONS.getItemIcon(item, 28)}</div>
                   <span>32px</span>
                 </div>
                 <div class="size-sample">
-                  <div class="size-box-48">${window.ISAAC_ICONS.getItemIcon(item, 42)}</div>
+                  <div class="size-box-48${window.ISAAC_ICONS.hasQ4Portrait(item) ? " q4-stage" : ""}">${window.ISAAC_ICONS.getItemIcon(item, 42)}</div>
                   <span>48px</span>
                 </div>
               </div>
@@ -1070,8 +1072,8 @@
           .map(
             (item) => `
               <div class="diecut-sticker">
-                <button type="button" class="icon-stage-btn" data-open-modal="${item.id}" aria-label="查看 #${item.id} ${escapeHtml(item.nameZh)}">
-                  ${window.ISAAC_ICONS.getItemIcon(item, 42)}
+                <button type="button" class="icon-stage-btn${window.ISAAC_ICONS.hasQ4Portrait(item) ? " q4-stage" : ""}" data-open-modal="${item.id}" aria-label="查看 #${item.id} ${escapeHtml(item.nameZh)}">
+                  ${window.ISAAC_ICONS.getItemIcon(item, window.ISAAC_ICONS.hasQ4Portrait(item) ? 54 : 42)}
                 </button>
                 <span class="mono" style="margin-top: 6px; font-size: 10px; font-weight: 900; color: var(--crimson-800);">#${item.id}</span>
                 <span class="hand-title" style="font-size: 13px; font-weight: 900;">${escapeHtml(item.nameZh)}</span>
@@ -1308,8 +1310,9 @@
     }
 
     const hasArt = Boolean(CUSTOM_ART_META[item.id]);
+    const hasQ4Portrait = window.ISAAC_ICONS.hasQ4Portrait(item);
     if (state.selectedId !== id) {
-      state.modalArtView = hasArt ? "art" : "minimal";
+      state.modalArtView = hasArt && !hasQ4Portrait ? "art" : "minimal";
     }
     state.selectedId = id;
 
@@ -1321,10 +1324,11 @@
     const nextItem = nextVanillaId ? itemsDB.find((i) => i.id === nextVanillaId) : null;
 
     const art = CUSTOM_ART_META[item.id];
+    const showQ4Portrait = hasQ4Portrait && state.modalArtView === "minimal";
     const stageHtml =
       state.modalArtView === "art" && art
         ? `<img src="${art.src}" alt="${escapeHtml(item.nameZh)} 典藏插画" />`
-        : window.ISAAC_ICONS.getItemIcon(item, 140);
+        : window.ISAAC_ICONS.getItemIcon(item, showQ4Portrait ? 184 : 140);
 
     const doorGuides = (item.pools || []).map((p) => {
       const g = ROOM_DOOR_GUIDE[p] || { doorSvg: "doorSpecial", title: p, tip: "属于该常规房间道具池。" };
@@ -1360,14 +1364,14 @@
               典藏插画${hasArt ? "" : "(无)"}
             </button>
             <button type="button" class="isaac-btn btn-sm ${state.modalArtView === "minimal" ? "btn-gold" : "btn-parchment"}" data-modal-art="minimal">
-              列表矢量图标
+              ${hasQ4Portrait ? "Q4 手绘图标" : "列表矢量图标"}
             </button>
           </div>
 
-          <div class="modal-stage-box">${stageHtml}</div>
+          <div class="modal-stage-box${showQ4Portrait ? " q4-stage" : ""}">${stageHtml}</div>
 
           ${
-            art
+            art && !showQ4Portrait
               ? `<div class="art-note-box">画师手记：${escapeHtml(art.artNote)}</div>`
               : ""
           }

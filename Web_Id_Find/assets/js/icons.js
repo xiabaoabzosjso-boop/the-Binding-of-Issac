@@ -109,7 +109,22 @@ window.ISAAC_ICONS = (() => {
     723: (px) => `<svg width="${px}" height="${px}" viewBox="0 0 32 32" fill="none" aria-hidden="true"><polygon points="16,3.5 27.5,10 27.5,22 16,28.5 4.5,22 4.5,10" fill="#4338ca" stroke="#140e0c" stroke-width="2.2" stroke-linejoin="round"/><path d="M16 9.5v12m0 0-4-4m4 4 4-4" stroke="#fde047" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   };
 
+  const q4PortraitSlots = new Map([
+    4, 12, 105, 114, 118, 149, 169, 182, 245, 331, 395,
+    415, 441, 581, 625, 628, 636, 678, 689, 691, 698, 723,
+  ].map((id, index) => [id, index]));
+
+  function hasQ4Portrait(item) {
+    return item?.quality === 4 && q4PortraitSlots.has(item.id);
+  }
+
   function getItemIcon(item, px = 44) {
+    if (hasQ4Portrait(item)) {
+      const slot = q4PortraitSlots.get(item.id);
+      const x = (slot % 6) * 20;
+      const y = (Math.floor(slot / 6) * 100 / 3).toFixed(6);
+      return `<span class="q4-portrait" aria-hidden="true" style="--portrait-size:${px}px;--portrait-x:${x}%;--portrait-y:${y}%"></span>`;
+    }
     if (item && MINIMAL_SMALL_ICONS[item.id]) {
       return MINIMAL_SMALL_ICONS[item.id](px);
     }
@@ -122,6 +137,7 @@ window.ISAAC_ICONS = (() => {
   return {
     UI: UI_ICONS,
     MINIMAL_SMALL_ICONS,
+    hasQ4Portrait,
     getItemIcon,
   };
 })();
